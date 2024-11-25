@@ -109,8 +109,8 @@ class MyCompany(TradingCompany):
         total_time = loading_time + travel_time + unloading_time
 
         # Calculate fuel consumption and cost
-        fuel_consumption = vessel.get_fuel_consumption(total_time)
-        cost = fuel_consumption * vessel.fuel_cost
+        # fuel_consumption = vessel.get_fuel_consumption(total_time)
+        # cost = fuel_consumption * vessel.fuel_cost
 
         cost = vessel.get_cost(consumption)
         
