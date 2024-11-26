@@ -9,7 +9,7 @@ import loguru
 
 from mable.cargo_bidding import TradingCompany
 from mable.engine import SimulationEngine
-from mable.event_management import CargoAnnouncementEvent, CargoEvent
+from mable.event_management import CargoAnnouncementEvent, CargoEvent, FirstCargoAnnouncementEvent
 from mable.extensions.cargo_distributions import DistributionShipping
 from mable.extensions.fuel_emissions import FuelClassFactory, FuelSimulationFactory
 from mable.shipping_market import AuctionMarket, StaticShipping
@@ -29,24 +29,28 @@ class AuctionSimulationEngine(SimulationEngine):
     def _set_up_trades(self):
         if isinstance(self.shipping, DistributionShipping):
             for one_time in self._shipping.get_trading_times():
-                if one_time == 0:
-                    announcement_time = 0.001
-                elif one_time == self.shipping.trade_occurrence_frequency:
-                    announcement_time = 0
-                else:
-                    announcement_time = one_time - self.shipping.trade_occurrence_frequency - 0.001
-                one_trading_event = CargoAnnouncementEvent(announcement_time, one_time)
-                self._world.event_queue.put(one_trading_event)
+                if one_time > 0:
+                    if one_time == self.shipping.trade_occurrence_frequency:
+                        if len(self.shipping.get_trades(0)) > 0:
+                            one_announcement_event =  FirstCargoAnnouncementEvent(0, one_time)
+                        else:
+                            one_announcement_event = CargoAnnouncementEvent(0, one_time)
+                    else:
+                        announcement_time = one_time - self.shipping.trade_occurrence_frequency - 0.0000000001
+                        one_announcement_event = CargoAnnouncementEvent(announcement_time, one_time)
+                    self._world.event_queue.put(one_announcement_event)
         else:
             for one_time in self._shipping.get_trading_times():
-                if one_time == 0:
-                    announcement_time = 0.001
-                elif one_time == 30:
-                    announcement_time = 0
-                else:
-                    announcement_time = one_time - 30 - 0.001
-                one_trading_event = CargoAnnouncementEvent(announcement_time, one_time)
-                self._world.event_queue.put(one_trading_event)
+                if one_time > 0:
+                    if one_time == 30 * 24:
+                        if len(self.shipping.get_trades(0)) > 0:
+                            one_announcement_event =  FirstCargoAnnouncementEvent(0, one_time)
+                        else:
+                            one_announcement_event = CargoAnnouncementEvent(0, one_time)
+                    else:
+                        announcement_time = one_time - 30 * 24 - 0.0000000001
+                        one_announcement_event = CargoAnnouncementEvent(announcement_time, one_time)
+                    self._world.event_queue.put(one_announcement_event)
 
 
 class AuctionCargoEvent(CargoEvent):

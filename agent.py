@@ -78,6 +78,8 @@ class MyCompany(TradingCompany):
                 scheduled_trades.append(current_trade)
                 costs[current_trade] = min_cost
 
+            # find next future best trade
+
         return ScheduleProposal(schedules, scheduled_trades, costs)
 
     def calculate_total_cost(self, vessel, trade):
@@ -103,31 +105,48 @@ class MyCompany(TradingCompany):
 
         # Calculate unloading time
         # unloading_time = vessel.get_unloading_time(cargo_type, cargo_amount)
-        unloading_time  = loading_time + 0
 
         # Total time for the operation
-        total_time = loading_time + travel_time + unloading_time
+        total_time = (loading_time * 2) + travel_time
 
         # Calculate fuel consumption and cost
         # fuel_consumption = vessel.get_fuel_consumption(total_time)
         # cost = fuel_consumption * vessel.fuel_cost
 
-        cost = vessel.get_cost(consumption)
+        # calculate the idle time
+        # idle time = earliest pickup - arrival time
+
+        # calculate arrival times
+
+
+
+        pickup_idle_time = trade.earliest_pickup - pickup_arrival_time
+        dropoff_idle_time = trade.earliest_dropoff - dropoff_arrival_time
+
+        
         
         # Calculate various costs
-        ballast_consumption = vessel.get_ballast_consumption(total_time, vessel_speed)
+        ballast_consumption = vessel.get_ballast_consumption(travel_time, vessel_speed)
         co2_consumption = vessel.get_co2_emission(cargo_amount)
         fuel_consumption = vessel.get_cost(cargo_amount)
-        idle_consumption = vessel.get_idle_consumption(total_time)
-        travel_consumption = vessel.get_laden_consumption(total_time, vessel_speed)
-        loading_consumption = vessel.get_loading_consumption(total_time)
-        unloading_consumption = vessel.get_unloading_consumption(total_time)
+        idle_consumption = vessel.get_idle_consumption(pickup_idle_time, dropoff_idle_time)
+        travel_consumption = vessel.get_laden_consumption(travel_time, vessel_speed)
+        loading_consumption = vessel.get_loading_consumption(loading_time)
+        unloading_consumption = vessel.get_unloading_consumption(loading_time)
         
         consumption = ballast_consumption + co2_consumption + fuel_consumption + idle_consumption + travel_consumption + loading_consumption + unloading_consumption
-
+        cost = vessel.get_cost(consumption)
         return cost
 
+    def predict_bid(self, trade):
+        """
+        Predict the bid for a trade.
+        """
+        # bid = cost * (1 + profit margin)
 
+        pass
+
+    # find the closest competitor's vessel to the trade's origin port
     def find_competing_vessels(self, trade):
         """
         Find competing vessels for a given trade.
@@ -136,9 +155,26 @@ class MyCompany(TradingCompany):
         for company in self.headquarters.get_companies():
             if company == self:
                 continue
+            # for every company find the closest vessel to the trade's origin port
             closest_vessel = min(company.fleet, key=lambda v: self.headquarters.get_network_distance(v.location, trade.origin_port))
+            # add the closest vessel to the competing vessels dictionary
             competing_vessels[company] = closest_vessel
         return competing_vessels
+    
+    def predict_competitor_profit(self, trade, auction_ledger=None):
+        # calclate the profit of all the competing vessels
+        competing_vessels = self.find_competing_vessels(trade)
+        for company, vessel in competing_vessels.items():
+            cost = self.predict_cost(vessel, trade)
+            bid = self.create_bid(cost, len(competing_vessels))
+            # calculate the profit of the competitor
+            profit = trade.profit - bid
+            self.competitor_data[company] = profit
+
+        # competitor_name = "Arch Enemy Ltd."
+        # competitor_won_contracts = auction_ledger[competitor_name]
+        # competitor_fleet = [c for c in self.headquarters.get_companies() if c.name == competitor_name].pop().fleet
+        
 
     def create_bid(self, cost, num_competitors):
         """
@@ -202,18 +238,20 @@ class MyCompany(TradingCompany):
         for vessel, schedule in schedules.items():
             vessel.schedule = schedule
 
-    def predict_cost(self, vessel, trade):
-        """
-        Predict the cost for a competitor's vessel to transport a trade.
-        """
-        loading_time = vessel.get_loading_time(trade)
-        travel_time = self.headquarters.get_network_distance(trade.origin_port, trade.destination_port) / vessel.speed
-        unloading_time = vessel.get_unloading_time(trade)
-        total_time = loading_time + travel_time + unloading_time
+    # def predict_cost(self, vessel, trade):
+    #     """
+    #     Predict the cost for a competitor's vessel to transport a trade.
+    #     """
+    #     loading_time = vessel.get_loading_time(cargo_type=trade.cargo_type, cargo_amount=trade.amount)
+    #     travel_time = self.headquarters.get_network_distance(trade.origin_port, trade.destination_port) / vessel.speed
+    #     # unloading_time = vessel.get_unloading_time(cargo_type=trade.cargo_type, cargo_amount=trade.amount)
+    #     # assuming loading and unloading times are the same
+    #     total_time = (loading_time * 2) + travel_time
 
-        fuel_consumption = vessel.get_fuel_consumption(total_time)
-        cost = fuel_consumption * vessel.fuel_cost
-        return cost
+    #     fuel_consumption = self.calculate_total_cost
+
+    #     cost = fuel_consumption * vessel.fuel_cost
+    #     return cost
 
 if __name__ == "__main__":
     specifications_builder = environment.get_specification_builder(environment_files_path=".")

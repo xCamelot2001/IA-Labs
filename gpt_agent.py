@@ -109,14 +109,13 @@ class MyCompany(TradingCompany):
         total_time = loading_time + travel_time + unloading_time
 
         # Calculate fuel consumption and cost
-        fuel_consumption = vessel.get_fuel_consumption(total_time)
-        cost = fuel_consumption * vessel.fuel_cost
+        # fuel_consumption = vessel.get_fuel_consumption(total_time)
+        # cost = fuel_consumption * vessel.fuel_cost
 
-        cost = vessel.get_cost(consumption)
         
         # Calculate various costs
         ballast_consumption = vessel.get_ballast_consumption(total_time, vessel_speed)
-        co2_consumption = vessel.get_co2_emission(cargo_amount)
+        co2_consumption = vessel.get_co2_emissions(cargo_amount)
         fuel_consumption = vessel.get_cost(cargo_amount)
         idle_consumption = vessel.get_idle_consumption(total_time)
         travel_consumption = vessel.get_laden_consumption(total_time, vessel_speed)
@@ -124,6 +123,8 @@ class MyCompany(TradingCompany):
         unloading_consumption = vessel.get_unloading_consumption(total_time)
         
         consumption = ballast_consumption + co2_consumption + fuel_consumption + idle_consumption + travel_consumption + loading_consumption + unloading_consumption
+
+        cost = vessel.get_cost(consumption)
 
         return cost
 
@@ -151,7 +152,7 @@ class MyCompany(TradingCompany):
         Process won contracts and schedule transportation for trades.
         """
         trades = [contract.trade for contract in contracts]
-        scheduling_proposal = self.find_schedules(trades)
+        scheduling_proposal = self.propose_schedules(trades)
         self.apply_schedules(scheduling_proposal.schedules)
 
     # def find_schedules(self, trades):

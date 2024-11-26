@@ -20,8 +20,11 @@ class SimulationEngineAware:
 
     def set_engine(self, engine):
         """
+        **WARNING**: Part of internal simulation logic. Only allowed to be called by the simulation!
+
         Set the simulation engine.
-        :param engine:
+
+        :param engine: The simulation engine.
         :type engine: SimulationEngine
         """
         self._engine = engine
@@ -35,7 +38,6 @@ class World(SimulationEngineAware):
 
     def __init__(self, network, event_queue, random):
         """
-        Constructor.
         :param network:
             The space/network of operation.
         :type network: ShippingNetwork
@@ -70,8 +72,8 @@ class World(SimulationEngineAware):
     @property
     def event_queue(self):
         """
-        :return: EventQueue
-            The event queue.
+        :return: The event queue.
+        :rtype: EventQueue
         """
         return self._event_queue
 

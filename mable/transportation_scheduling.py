@@ -52,8 +52,10 @@ class Schedule(SimulationEngineAware):
     The schedule of a vessel.
     """
 
-    def __init__(self, vessel, schedule=None):
+    def __init__(self, vessel, current_time=0, schedule=None):
         """
+        **Note**: Requires the engine to be set to work.
+
         :param vessel: The vessel for which the schedule is.
         :type vessel: Vessel
         :param schedule: Used for creating schedule copies (see :py:func:`schedule_copy`).
@@ -66,9 +68,15 @@ class Schedule(SimulationEngineAware):
         else:
             self._stn = schedule
         self._vessel = vessel
-        self._time_schedule_head = 0
+        self._time_schedule_head = current_time
         self._next_event = None
         self._last_event = None
+
+    @classmethod
+    def init_with_engine(cls, vessel, current_time, engine):
+        schedule = cls(vessel, current_time)
+        schedule.set_engine(engine)
+        return schedule
 
     @property
     def _number_tasks(self):
@@ -83,7 +91,8 @@ class Schedule(SimulationEngineAware):
         :return: The copy
         :rtype: Schedule
         """
-        copy_with_deepcopy_stn = Schedule(self._vessel, copy.deepcopy(self._stn))
+        copy_with_deepcopy_stn = Schedule(
+            self._vessel, current_time=self._time_schedule_head, schedule=copy.deepcopy(self._stn))
         copy_with_deepcopy_stn.set_engine(self._engine)
         return copy_with_deepcopy_stn
 
@@ -315,6 +324,8 @@ class Schedule(SimulationEngineAware):
         :type location_drop_off: int
         :raises: ValueError if the pick-up and drop-off indices are wrong.
         """
+        if len(self) == 0:
+            self._time_schedule_head = self._engine.world.current_time
         if location_pick_up is None:
             location_pick_up = self.get_insertion_points()[-1]
         if location_drop_off is None:

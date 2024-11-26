@@ -39,6 +39,7 @@ class Shipping(SimulationEngineAware):
         """
         super().__init__()
         self._all_trades = {}
+        self._occurred_trades = {}
         self.initialise_trades(*args, **kwargs)
 
     @abstractmethod
@@ -78,15 +79,20 @@ class Shipping(SimulationEngineAware):
         :return: The list of trades.
         :rtype: List[Trade]
         """
-        trades = []
-        if time in self._all_trades:
-            trades = self._all_trades[time]
-        all_occurring_trades = [
-            t for t in trades
-            if self._engine.world.random.choice([0, 1], p=[1 - t.probability, t.probability])]
-        logger.info(f"{len(all_occurring_trades)} trades of a total of {len(trades)} trades realised (time: {time}).")
-        for one_trade in [t for t in trades if t not in all_occurring_trades]:
-            one_trade.status = TradeStatus.NOT_REALISED
+        if time in self._occurred_trades:
+            all_occurring_trades = self._occurred_trades[time]
+        else:
+            if time in self._all_trades:
+                trades = self._all_trades[time]
+                all_occurring_trades = [
+                    t for t in trades
+                    if self._engine.world.random.choice([0, 1], p=[1 - t.probability, t.probability])]
+                logger.info(f"{len(all_occurring_trades)} trades of a total of {len(trades)} trades realised (time: {time}).")
+                for one_trade in [t for t in trades if t not in all_occurring_trades]:
+                    one_trade.status = TradeStatus.NOT_REALISED
+                self._occurred_trades[time] = all_occurring_trades
+            else:
+                all_occurring_trades = []
         return all_occurring_trades
 
 
@@ -349,7 +355,7 @@ class AuctionLedger:
         A full copy of the ledger as a dict of the trades indexed by the company names.
 
         :return: The ledger.
-        :rtype: Dict[str, Contract]
+        :rtype: Dict[str, List[Contract]]
         """
         sanitised_ledger = {k.name: [c.copy() for c in self._ledger[k]] for k in self._ledger}
         return sanitised_ledger
@@ -443,7 +449,7 @@ class AuctionMarket(Market, SimulationEngineAware):
         for one_trade in trades:
             all_bids_for_current_trade = all_bids_per_trade[AuctionMarket._get_trade_index(one_trade, trades)]
             if len(all_bids_for_current_trade) > 0:
-                all_bids_for_trade = sorted(all_bids_for_current_trade, key=lambda b: b.amount, reverse=True)
+                all_bids_for_trade = sorted(all_bids_for_current_trade, key=lambda b: b.amount)
                 smallest_bid_company = all_bids_for_trade[0].company
                 if len(all_bids_for_current_trade) > 1:
                     payment = all_bids_for_current_trade[1].amount

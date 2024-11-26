@@ -70,7 +70,7 @@ class DistributionShipping(Shipping):
         self._time_transition_dist = None
         self._cargo_weight_dist = None
         self._frequency_dist = None
-        self._trade_occurrence_frequency = kwargs['trade_occurrence_frequency']
+        self._trade_occurrence_frequency = kwargs['trade_occurrence_frequency'] * 24
         self._trades_per_occurrence = kwargs['trades_per_occurrence']
         self._simulation_length = kwargs['simulation_length']
         super().__init__(*args, **kwargs)

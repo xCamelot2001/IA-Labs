@@ -12,7 +12,6 @@ class MyCompany(TradingCompany):
         competitor_won_contracts = auction_ledger[competitor_name]
         competitor_fleet = [c for c in self.headquarters.get_companies() if c.name == competitor_name].pop().fleet
         # TODO find and print predicted bid factors
-
     def predict_cost(self, vessel, trade):
         total_cost = 1  # TODO Replace
         return total_cost

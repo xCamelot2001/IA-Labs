@@ -13,7 +13,7 @@ def get_fuel_mfo():
     :return: The fuel instance.
     :rtype Fuel
     """
-    fuel_mfo = Fuel(name="MFO", price=430, energy_coefficient=40, co2_coefficient=3.16)
+    fuel_mfo = Fuel(name="MFO", price=1, energy_coefficient=40, co2_coefficient=3.16)
     return fuel_mfo
 
 

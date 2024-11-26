@@ -66,8 +66,8 @@ def _get_specification_builder():
     return specifications_builder
 
 
-def _generate_environment(specifications_builder, trade_occurrence_frequency=30,
-                          trades_per_occurrence=1, simulation_length=60, environment_files_path=".",
+def _generate_environment(specifications_builder, trade_occurrence_frequency,
+                          trades_per_occurrence, simulation_length, environment_files_path=".",
                           fixed_trades=None):
     """
     Initialises the environment of the simulation.

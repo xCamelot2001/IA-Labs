@@ -6,7 +6,7 @@ from abc import abstractmethod
 from dataclasses import dataclass, field
 import math
 from queue import PriorityQueue
-from typing import Any, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING, List
 
 from mable.simulation_environment import SimulationEngineAware
 from mable.simulation_space import OnJourney
@@ -100,6 +100,32 @@ class Event:
         return are_same
 
 
+class FirstCargoAnnouncementEvent(Event):
+    """
+    Announces future cargoes at the start of the simulation before a cargo auction at time 0.
+    """
+
+    def __init__(self, time, cargo_available_time_second_cargo):
+        super().__init__(time)
+        self._cargo_available_time_second_cargo = cargo_available_time_second_cargo
+
+    def event_action(self, engine):
+        """
+        Announces the cargoes becoming available at a later time and adds the auction to the event queue as well as
+        the auction about events at time 0.
+
+        :param engine: The simulation engine.
+        :type engine: SimulationEngine
+        """
+        all_trades_later = engine.shipping.get_trades(self._cargo_available_time_second_cargo)
+        engine.market.inform_future_trades(
+            all_trades_later, self._cargo_available_time_second_cargo, engine.shipping_companies)
+        self.info = (f"#Trades: {len(all_trades_later)}."
+                     f" For time {self.format_time(self._cargo_available_time_second_cargo)}")
+        engine.world.event_queue.put(engine.class_factory.generate_event_cargo(0))
+        engine.world.event_queue.put(engine.class_factory.generate_event_cargo(self._cargo_available_time_second_cargo))
+
+
 class CargoAnnouncementEvent(Event):
     """
     Announces future cargoes
@@ -111,10 +137,9 @@ class CargoAnnouncementEvent(Event):
 
     def event_action(self, engine):
         """
-        Announces the cargoes becoming available at a later time.
+        Announces the cargoes becoming available at a later time and adds the auction to the event queue.
 
-        :param engine: SimulationEngine
-            The simulation engine.
+        :param engine: The simulation engine.
         :type engine: SimulationEngine
         """
         all_trades = engine.shipping.get_trades(self._cargo_available_time)
@@ -153,10 +178,10 @@ class DurationEvent(Event):
 
     def __init__(self, time):
         """
-        Constructor.
         An unstarted event has a start time of -1.
-        :param time: float
-            The time at which the event happens/ends.
+
+        :param time: The time at which the event happens/ends.
+        :type time: float
         """
         super().__init__(time)
         self._time_started = -1
@@ -189,6 +214,7 @@ class DurationEvent(Event):
     def performed_time(self):
         """
         The duration the event took. Is zero as long as the event hasn't started.
+
         :return: The duration.
         :rtype: float
         """
@@ -600,16 +626,19 @@ class EventQueue(SimulationEngineAware, PriorityQueue):
     def put(self, event: Event, block=True, timeout=None):
         """
         Adds an event to the queue.
-        :param event: Event
-            The event.
-        :param block:
-            See :py:func:`PriorityQueue.put`
-        :param timeout:
-            See :py:func:`PriorityQueue.put`
+
+        :param event: The event.
+        :type event: Event
+        :param block: See :py:func:`PriorityQueue.put`
+        :param timeout: See :py:func:`PriorityQueue.put`
         :raises ValueError: if the event's time is infinite.
+        :raises ValueError: if the event's time is in the past.
         """
         if event.time == math.inf:
-            raise ValueError("event with infinite deadline")
+            raise ValueError("Event with infinite deadline.")
+        # TODO Fix events in the past Look at time 4288.914
+        # if event.time < self._engine.world.current_time:
+        #     raise ValueError(f"Event {event} in the past. Current time: {self._engine.world.current_time}")
         event.added_to_queue(self._engine)
         event_item = EventItem(event.time, event)
         super().put(event_item, block, timeout)
@@ -617,12 +646,11 @@ class EventQueue(SimulationEngineAware, PriorityQueue):
     def get(self, block=True, timeout=None):
         """
         Removes and returns the next event from the queue.
-        :param block:
-            See :py:func:`PriorityQueue.get`
-        :param timeout:
-            See :py:func:`PriorityQueue.get`
-        :return: Event
-            The event.
+
+        :param block: See :py:func:`PriorityQueue.get`
+        :param timeout: See :py:func:`PriorityQueue.get`
+        :return: The event.
+        :rtype: Event
         """
         event_item = super().get(block, timeout)
         event = event_item.event
@@ -631,8 +659,9 @@ class EventQueue(SimulationEngineAware, PriorityQueue):
     def remove(self, event_s):
         """
         Removes one or more events from the queue.
-        :param event_s: Event | [Event]
-            The event or a list of events.
+
+        :param event_s: The event or a list of events.
+        :type event_s: Event | List[Event]
         """
         if not isinstance(event_s, list):
             event_s = [event_s]
@@ -642,10 +671,11 @@ class EventQueue(SimulationEngineAware, PriorityQueue):
     def __contains__(self, event):
         """
         Returns if an event that is equal to the passed event is in the queue.
-        :param event: Event
-            The passed event.
-        :return: bool
-            True if such an event is in the queue and False otherwise.
+
+        :param event:  The passed event.
+        :type event:  Event
+        :return: True if such an event is in the queue and False otherwise.
+        :rtype: bool
         """
         i = 0
         found_event = False
@@ -659,12 +689,12 @@ class EventQueue(SimulationEngineAware, PriorityQueue):
     def __getitem__(self, event):
         """
         Returns an event instance from the queue that is similar to the passed event.
-        :param event: Event
-            The passed event.
-        :return: bool
-            The event instance from the queue.
-        :raises ValueError:
-            If no such event is in the queue.
+
+        :param event: The passed event.
+        :type event: Event
+        :return: The event instance from the queue.
+        :rtype: bool
+        :raises ValueError: If no such event is in the queue.
         """
         if event in self.queue:
             return_event = self.queue[event]
@@ -674,8 +704,7 @@ class EventQueue(SimulationEngineAware, PriorityQueue):
 
     def __iter__(self):
         """
-        :return:
-            An iterator over the current events.
+        :return: An iterator over the current events.
         """
         return iter(self.queue)
 

@@ -18,6 +18,7 @@ from mable.util import JsonAble
 
 if TYPE_CHECKING:
     from mable.event_management import VesselEvent
+    from mable.simulation_space import Location, OnJourney
 
 
 @dataclass
@@ -249,7 +250,7 @@ class Vessel(SimulationEngineAware):
         super().__init__()
         self._cargo_hold = CargoHold(capacities_and_loading_rates)
         self._location = location
-        self._schedule = Schedule(self)
+        self._schedule = Schedule(self, 0)
         self._keep_journey_log = keep_journey_log
         self._journey_log = []
         self._name = name
@@ -338,6 +339,8 @@ class Vessel(SimulationEngineAware):
 
     def load_cargo(self, cargo_type, amount):
         """
+        **WARNING**: Part of internal simulation logic. Only allowed to be called by the simulation!
+
         Loads the specified amount of cargo in the container of the type.
 
         :param cargo_type: The cargo type.
@@ -349,6 +352,8 @@ class Vessel(SimulationEngineAware):
 
     def unload_cargo(self, cargo_type, amount):
         """
+        **WARNING**: Part of internal simulation logic. Only allowed to be called by the simulation!
+
         Unloads the specified amount of cargo in the container of the type.
 
         :param cargo_type: The cargo type.
@@ -378,14 +383,15 @@ class Vessel(SimulationEngineAware):
     def _next_event(self):
         """
         Retrieves, if exists, the next event in schedule without removing it.
-        :return:
-            The event.
+
+        :return: The event.
         """
         return self._schedule.next()
 
     def has_next_event(self):
         """
         Checks if there is at least one event in the schedule.
+
         :return: True is there is an event in the schedule and False otherwise.
         :rtype: bool
         """
@@ -402,7 +408,10 @@ class Vessel(SimulationEngineAware):
 
     def log_journey_log_event(self, log_entry):
         """
+        **WARNING**: Part of internal simulation logic. Only allowed to be called by the simulation!
+
         Log an entry in the journey log.
+
         :param log_entry: The entry to make
         :type log_entry: VesselEvent
         """
@@ -415,8 +424,8 @@ class Vessel(SimulationEngineAware):
         Replace the current schedule with a new schedule. The first event is taken as the current event that is added
         to the event queue and the old next event is removed from the event queue (if either or any exist).
         Does not validate the schedule.
-        :param new_schedule:
-            The new schedule.
+
+        :param new_schedule: The new schedule.
         """
         if self._next_event is not None:
             self._engine.event_queue.remove(self._next_event)
@@ -425,7 +434,10 @@ class Vessel(SimulationEngineAware):
 
     def event_occurrence(self, event):
         """
+        **WARNING**: Part of internal simulation logic. Only allowed to be called by the simulation!
+
         Informs the vessel about the occurrence of an event. This has to be the vessel's next event.
+
         :param event: The event.
         :raises ValueError: if the event is not the next event.
         """
@@ -437,6 +449,8 @@ class Vessel(SimulationEngineAware):
 
     def start_next_event(self):
         """
+        **WARNING**: Part of internal simulation logic. Only allowed to be called by the simulation!
+
         Starts the next event in schedule. The event is also added to the event queue. However, does not check if
         (if any) preceding next event has occurred nor tidies the event queue of any such event.
         """
@@ -447,25 +461,28 @@ class Vessel(SimulationEngineAware):
     @property
     def location(self):
         """
-        The current location
-        :return:
+        :return: The current location.
+        :rtype: Location | OnJourney
         """
         return self._location
 
     @location.setter
     def location(self, location):
         """
+        **WARNING**: Part of internal simulation logic. Only allowed to be called by the simulation!
+
         Change the current location of the vessel.
-        :param location:
-            The new location.
+
+        :param location: The new location.
+        :type location: Location | OnJourney
         """
         self._location = location
 
     @property
     def name(self):
         """
-        :return: str
-            The name of the vessel.
+        :return: The name of the vessel.
+        :rtype: str
         """
         return self._name
 

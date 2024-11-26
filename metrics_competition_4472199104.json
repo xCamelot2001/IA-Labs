@@ -1,0 +1,1933 @@
+{
+    "company_names": {
+        "0": "Companyn",
+        "1": "Arch Enemy Ltd.",
+        "2": "The Scheduler LP"
+    },
+    "company_metrics": {
+        "0": {
+            "fuel_consumption": 614587.825551774,
+            "co2_emissions": 1942097.528743605,
+            "fuel_cost": 264272764.98726273,
+            "vessel_status_ballast": 4486.45357142859,
+            "vessel_status_idle": 613800.0957715443,
+            "vessel_status_loading": 19.676152869673388,
+            "vessel_status_laden": 2392.35142857147,
+            "vessel_status_unloading": 19.676152869673388
+        },
+        "1": {
+            "fuel_consumption": 218644.4902719922,
+            "co2_emissions": 690916.5892594953,
+            "fuel_cost": 94017130.8169567,
+            "vessel_status_idle": 611202.8011785541,
+            "vessel_status_loading": 25.719877936153352,
+            "vessel_status_laden": 2143.166428571396,
+            "vessel_status_unloading": 25.719877936153352,
+            "vessel_status_ballast": 7320.845714285719
+        },
+        "2": {
+            "fuel_consumption": 235221.43835003514,
+            "co2_emissions": 743299.7451861111,
+            "fuel_cost": 101145218.49051507,
+            "vessel_status_idle": 603767.4456386594,
+            "vessel_status_loading": 50.13193359778785,
+            "vessel_status_laden": 5005.052142857157,
+            "vessel_status_unloading": 50.13193359778785,
+            "vessel_status_ballast": 12345.822857142864
+        }
+    },
+    "vessel_metrics": {
+        "(0, 0)": {
+            "route": [
+                "Paradip-bbfab942f25c",
+                "Ceuta-e2de790bdd0f",
+                "Porto Acu-db9c1341eaaa",
+                "Nakhodka-eaf8326ce14b",
+                "Long Beach-4c3082f54073",
+                "Port Ingleside-768a671ec8e5",
+                "Trieste-2aed856f346e",
+                "Fujairah-ca26fade3b91",
+                "Singapore-bfe15a9e31a0",
+                "Ras Tanura-601e8fb13c3c",
+                "Singapore-bfe15a9e31a0"
+            ],
+            "fuel_consumption": 72592.44842472374,
+            "co2_emissions": 229392.137022127,
+            "fuel_cost": 31214752.82263119,
+            "vessel_status_ballast": 2081.2892857142824,
+            "vessel_status_idle": 203187.78298577067,
+            "vessel_status_loading": 8.417472376226215,
+            "vessel_status_laden": 1620.177142857152,
+            "vessel_status_unloading": 8.417472376226215
+        },
+        "(0, 1)": {
+            "route": [
+                "Puerto Rosales-945fc5e1ffa4",
+                "Zhoushan-611472facb34",
+                "Dalian-641923403d46",
+                "Puerto Jose-bd9e62d67225",
+                "Escombreras-8ff2f5149d51",
+                "King Fahd Industrial Port Jubail-c2b2fbc77ff4",
+                "Fujairah-ca26fade3b91",
+                "Esmeraldas-2296c98900e5",
+                "Quintero-4b0992806f09"
+            ],
+            "fuel_consumption": 476984.8390826288,
+            "co2_emissions": 1507272.0915011065,
+            "fuel_cost": 205103480.80553037,
+            "vessel_status_ballast": 1762.2964285714324,
+            "vessel_status_idle": 204615.06489111166,
+            "vessel_status_loading": 7.951519705726241,
+            "vessel_status_laden": 512.8200000000143,
+            "vessel_status_unloading": 7.951519705726241
+        },
+        "(0, 2)": {
+            "route": [
+                "Hamburg-063772b8f28b",
+                "Al Basrah-1fc976f51917",
+                "Vadinar-95b0ec8946e3",
+                "Novorossiysk-45a5021eee47",
+                "Castellon-08c2845d53fd",
+                "Ras Tanura-601e8fb13c3c",
+                "Fujairah-ca26fade3b91"
+            ],
+            "fuel_consumption": 65010.53804442146,
+            "co2_emissions": 205433.30022037184,
+            "fuel_cost": 27954531.35910122,
+            "vessel_status_idle": 205997.24789466194,
+            "vessel_status_loading": 3.3071607877209317,
+            "vessel_status_laden": 259.35428571430384,
+            "vessel_status_unloading": 3.3071607877209317,
+            "vessel_status_ballast": 642.8678571428754
+        },
+        "(1, 0)": {
+            "route": [
+                "Paulsboro-b860100abb51",
+                "Fujairah-ca26fade3b91",
+                "Suez-4ad378ddd198",
+                "Port Angeles-084976ad6a70",
+                "Cherry Point-69fb11f0514e",
+                "Khor Fakkan-6317b39e2dcf",
+                "Tanjung Pelepas-71ae886ba35d",
+                "Fujairah-ca26fade3b91",
+                "Tanjung Pelepas-71ae886ba35d",
+                "Novorossiysk CPC-3b26a9570fd1",
+                "Trieste-2aed856f346e"
+            ],
+            "fuel_consumption": 71132.83596827385,
+            "co2_emissions": 224779.76165974536,
+            "fuel_cost": 30587119.466357753,
+            "vessel_status_idle": 204023.10804967774,
+            "vessel_status_loading": 6.678868994131335,
+            "vessel_status_laden": 779.0028571428411,
+            "vessel_status_unloading": 6.678868994131335,
+            "vessel_status_ballast": 2090.615714285712
+        },
+        "(1, 1)": {
+            "route": [
+                "Valdez-2044032df24e",
+                "Smiths Bluff-8218c47cd56c",
+                "Port Neches-b1543f00d56b",
+                "Kozmino-62a166ce6f35",
+                "Qingdao-910e8b237492",
+                "Mina Al Ahmadi Sea Island-98bd957bb207",
+                "Singapore-bfe15a9e31a0",
+                "Port Aransas-29a8105fada5",
+                "Corpus Christi-7a30d31f121f"
+            ],
+            "fuel_consumption": 70158.306220185,
+            "co2_emissions": 221700.2476557846,
+            "fuel_cost": 30168071.67467955,
+            "vessel_status_idle": 204604.70490677544,
+            "vessel_status_loading": 9.013654730999406,
+            "vessel_status_laden": 345.37928571427256,
+            "vessel_status_unloading": 9.013654730999406,
+            "vessel_status_ballast": 1937.9728571428532
+        },
+        "(1, 2)": {
+            "route": [
+                "Levis-10811e84a7d1",
+                "Primorsk-1745900bf09d",
+                "Skoldvik-9ac362d9504c",
+                "Ras Laffan-cb891923a010",
+                "Port Klang-083f09688b4c",
+                "Zirku Island-a43755386268",
+                "Singapore-bfe15a9e31a0",
+                "La Paloma-38165a549d3a",
+                "Angra Dos Reis-d87b536f17a4",
+                "Ust-Luga-e9ea2bf59471",
+                "Rotterdam-92c070ce8e92",
+                "Galveston-80916f3912d8",
+                "Port Fourchon-39947b92ce27",
+                "Kozmino-62a166ce6f35",
+                "Zhoushan-611472facb34",
+                "Mina Al Ahmadi Sea Island-98bd957bb207",
+                "Singapore-bfe15a9e31a0"
+            ],
+            "fuel_consumption": 77353.34808353335,
+            "co2_emissions": 244436.57994396545,
+            "fuel_cost": 33261939.675919358,
+            "vessel_status_idle": 202574.98822210106,
+            "vessel_status_loading": 10.027354211022612,
+            "vessel_status_laden": 1018.7842857142823,
+            "vessel_status_unloading": 10.027354211022612,
+            "vessel_status_ballast": 3292.2571428571537
+        },
+        "(2, 0)": {
+            "route": [
+                "Marcus Hook-9826103388b5",
+                "Yokohama-aa8f1ab13ec7",
+                "Kiire-c1d11e2429fa",
+                "Canuku Terminal-f70399be83e6",
+                "Nemrut Bay-e89f801cf7ac",
+                "Smiths Bluff-8218c47cd56c",
+                "Port Arthur-26aba1bc33e8",
+                "Algeciras-f1a4cd999637",
+                "Port Ingleside-768a671ec8e5",
+                "Al Basrah-1fc976f51917",
+                "Vadinar-95b0ec8946e3",
+                "Covenas-76285da2ae54",
+                "Mongstad-8338fd2d4afb",
+                "Grimsby-d6f49c2e1bad",
+                "Houston-453dd058edad",
+                "Port Neches-b1543f00d56b",
+                "Whiffen Head-9d95e17d2034",
+                "Augusta-facbcc9badd3",
+                "Al Muajjiz Terminal-e69352f09461",
+                "King Fahd Port-34821f7aa799",
+                "Mina Al Fahl-2478ba60dc4c",
+                "Fujairah-ca26fade3b91",
+                "Port Aransas-29a8105fada5",
+                "Ras Tanura-601e8fb13c3c",
+                "Singapore-bfe15a9e31a0"
+            ],
+            "fuel_consumption": 77705.48239980519,
+            "co2_emissions": 245549.32438338434,
+            "fuel_cost": 33413357.431916237,
+            "vessel_status_idle": 200024.09903104234,
+            "vessel_status_loading": 22.13944974039623,
+            "vessel_status_laden": 3258.0757142857183,
+            "vessel_status_unloading": 22.13944974039623,
+            "vessel_status_ballast": 3579.6307142857095
+        },
+        "(2, 1)": {
+            "route": [
+                "Grimsby-d6f49c2e1bad",
+                "Ras Tanura-601e8fb13c3c",
+                "Singapore-bfe15a9e31a0",
+                "Jing Tang-d63c27036294",
+                "Changxingdao-5c16d1a2a8e9",
+                "Malta Freeport-d3fb8c6279a1",
+                "Trieste-2aed856f346e",
+                "Rio De Janeiro-ef2da6007e09",
+                "Sao Sebastiao-0bca302110e4",
+                "Puerto La Cruz-04e122120f88",
+                "El Palito-45b3dde23b18",
+                "Port Dickson-47b3d9faec98",
+                "Singapore-bfe15a9e31a0",
+                "Port Arthur-26aba1bc33e8",
+                "Houston-453dd058edad",
+                "Sidi Kerir-552c943d8b08",
+                "Ceyhan-3b530c868db0"
+            ],
+            "fuel_consumption": 72697.64488076288,
+            "co2_emissions": 229724.55782321084,
+            "fuel_cost": 31259987.298728053,
+            "vessel_status_idle": 202892.6728273535,
+            "vessel_status_loading": 12.789337299087492,
+            "vessel_status_laden": 389.30357142857247,
+            "vessel_status_unloading": 12.789337299087492,
+            "vessel_status_ballast": 3598.5292857142977
+        },
+        "(2, 2)": {
+            "route": [
+                "Ban Ao Udom-d8ec7fa8f70d",
+                "Teesport-736acdd7afa2",
+                "Immingham-03154ce774bb",
+                "Novorossiysk-45a5021eee47",
+                "Nemrut Bay-e89f801cf7ac",
+                "Porto Acu-db9c1341eaaa",
+                "Sao Sebastiao-0bca302110e4",
+                "Ras Tanura-601e8fb13c3c",
+                "Gwangyang-11ecb2ca4f7f",
+                "Mina Al Ahmadi Sea Island-98bd957bb207",
+                "Singapore-bfe15a9e31a0",
+                "Hound Point-199882e34b06",
+                "Rotterdam-92c070ce8e92",
+                "Galveston-80916f3912d8",
+                "Saint John-99b5182a722a",
+                "Fujairah-ca26fade3b91",
+                "Tanjung Pelepas-71ae886ba35d",
+                "Puerto Jose-bd9e62d67225",
+                "Punta Cardon-a3b8a4418174",
+                "Rio De Janeiro-ef2da6007e09",
+                "Sao Francisco-a1636f5a0ca0",
+                "Mina Al Ahmadi-2d893ce729f6",
+                "Karachi-d8f24cbce54f"
+            ],
+            "fuel_consumption": 84818.311069467,
+            "co2_emissions": 268025.86297951575,
+            "fuel_cost": 36471873.759870805,
+            "vessel_status_idle": 200850.67378026366,
+            "vessel_status_loading": 15.203146558304127,
+            "vessel_status_laden": 1357.6728571428662,
+            "vessel_status_unloading": 15.203146558304127,
+            "vessel_status_ballast": 5167.662857142857
+        }
+    },
+    "global_metrics": {
+        "auction_outcomes": [
+            {
+                "0": [
+                    {
+                        "payment": 1114.672097060364,
+                        "trade": {
+                            "origin_port": {
+                                "name": "Nakhodka-eaf8326ce14b",
+                                "latitude": 42.78621,
+                                "longitude": 132.92236
+                            },
+                            "destination_port": {
+                                "name": "Long Beach-4c3082f54073",
+                                "latitude": 33.75264,
+                                "longitude": -118.21166
+                            },
+                            "amount": 107161.57595757782,
+                            "cargo_type": "Oil",
+                            "time": 0,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                161736,
+                                161976,
+                                162144,
+                                162384
+                            ]
+                        }
+                    },
+                    {
+                        "payment": 746.6867917031703,
+                        "trade": {
+                            "origin_port": {
+                                "name": "Fujairah-ca26fade3b91",
+                                "latitude": 25.16933,
+                                "longitude": 56.3799
+                            },
+                            "destination_port": {
+                                "name": "Singapore-bfe15a9e31a0",
+                                "latitude": 1.32447,
+                                "longitude": 103.82839
+                            },
+                            "amount": 62218.48614552997,
+                            "cargo_type": "Oil",
+                            "time": 0,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                188928,
+                                189168,
+                                189216,
+                                189456
+                            ]
+                        }
+                    },
+                    {
+                        "payment": 824.2010704155646,
+                        "trade": {
+                            "origin_port": {
+                                "name": "Ras Tanura-601e8fb13c3c",
+                                "latitude": 26.65957,
+                                "longitude": 50.22456
+                            },
+                            "destination_port": {
+                                "name": "Singapore-bfe15a9e31a0",
+                                "latitude": 1.32447,
+                                "longitude": 103.82839
+                            },
+                            "amount": 77634.6328565317,
+                            "cargo_type": "Oil",
+                            "time": 0,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                206640,
+                                206880,
+                                206880,
+                                207120
+                            ]
+                        }
+                    },
+                    {
+                        "payment": 1438.621567104449,
+                        "trade": {
+                            "origin_port": {
+                                "name": "Port Ingleside-768a671ec8e5",
+                                "latitude": 27.84022,
+                                "longitude": -97.22681
+                            },
+                            "destination_port": {
+                                "name": "Trieste-2aed856f346e",
+                                "latitude": 45.627,
+                                "longitude": 13.76048
+                            },
+                            "amount": 28033.472355843212,
+                            "cargo_type": "Oil",
+                            "time": 0,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                173184,
+                                173424,
+                                173688,
+                                173928
+                            ]
+                        }
+                    },
+                    {
+                        "payment": 3398.671989956196,
+                        "trade": {
+                            "origin_port": {
+                                "name": "Ceuta-e2de790bdd0f",
+                                "latitude": 35.89482,
+                                "longitude": -5.31416
+                            },
+                            "destination_port": {
+                                "name": "Porto Acu-db9c1341eaaa",
+                                "latitude": -21.83813,
+                                "longitude": -40.99457
+                            },
+                            "amount": 73670.8782871057,
+                            "cargo_type": "Oil",
+                            "time": 0,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                104352,
+                                104592,
+                                104712,
+                                104952
+                            ]
+                        }
+                    }
+                ],
+                "1": [],
+                "2": []
+            },
+            {
+                "0": [
+                    {
+                        "payment": 890.9473215423363,
+                        "trade": {
+                            "origin_port": {
+                                "name": "Puerto Jose-bd9e62d67225",
+                                "latitude": 10.09938,
+                                "longitude": -64.8722
+                            },
+                            "destination_port": {
+                                "name": "Escombreras-8ff2f5149d51",
+                                "latitude": 37.56818,
+                                "longitude": -0.96804
+                            },
+                            "amount": 92399.41398086428,
+                            "cargo_type": "Oil",
+                            "time": 720,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                53904,
+                                54144,
+                                54240,
+                                54480
+                            ]
+                        }
+                    },
+                    {
+                        "payment": 121.21299893467747,
+                        "trade": {
+                            "origin_port": {
+                                "name": "Zhoushan-611472facb34",
+                                "latitude": 30.03737,
+                                "longitude": 122.14654
+                            },
+                            "destination_port": {
+                                "name": "Dalian-641923403d46",
+                                "latitude": 38.9901,
+                                "longitude": 121.80123
+                            },
+                            "amount": 10451.928251631898,
+                            "cargo_type": "Oil",
+                            "time": 720,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                40296,
+                                40536,
+                                40392,
+                                40632
+                            ]
+                        }
+                    },
+                    {
+                        "payment": 508.5503318033283,
+                        "trade": {
+                            "origin_port": {
+                                "name": "Esmeraldas-2296c98900e5",
+                                "latitude": 0.98852,
+                                "longitude": -79.64754
+                            },
+                            "destination_port": {
+                                "name": "Quintero-4b0992806f09",
+                                "latitude": -32.76508,
+                                "longitude": -71.51597
+                            },
+                            "amount": 64712.93166763511,
+                            "cargo_type": "Oil",
+                            "time": 720,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                201312,
+                                201552,
+                                201480,
+                                201720
+                            ]
+                        }
+                    },
+                    {
+                        "payment": 293.81235803057774,
+                        "trade": {
+                            "origin_port": {
+                                "name": "Al Basrah-1fc976f51917",
+                                "latitude": 29.67187,
+                                "longitude": 48.83146
+                            },
+                            "destination_port": {
+                                "name": "Vadinar-95b0ec8946e3",
+                                "latitude": 22.48839,
+                                "longitude": 69.6867
+                            },
+                            "amount": 129966.6250638302,
+                            "cargo_type": "Oil",
+                            "time": 720,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                185688,
+                                185928,
+                                185856,
+                                186096
+                            ]
+                        }
+                    },
+                    {
+                        "payment": 105.25351948078423,
+                        "trade": {
+                            "origin_port": {
+                                "name": "King Fahd Industrial Port Jubail-c2b2fbc77ff4",
+                                "latitude": 27.08492,
+                                "longitude": 49.6814
+                            },
+                            "destination_port": {
+                                "name": "Fujairah-ca26fade3b91",
+                                "latitude": 25.16933,
+                                "longitude": 56.3799
+                            },
+                            "amount": 59618.595611532546,
+                            "cargo_type": "Oil",
+                            "time": 720,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                166008,
+                                166248,
+                                166128,
+                                166368
+                            ]
+                        }
+                    }
+                ],
+                "1": [],
+                "2": []
+            },
+            {
+                "0": [
+                    {
+                        "payment": 451.0093381064381,
+                        "trade": {
+                            "origin_port": {
+                                "name": "Novorossiysk-45a5021eee47",
+                                "latitude": 44.7148,
+                                "longitude": 37.81347
+                            },
+                            "destination_port": {
+                                "name": "Castellon-08c2845d53fd",
+                                "latitude": 39.96503,
+                                "longitude": 0.02471
+                            },
+                            "amount": 65154.599866113764,
+                            "cargo_type": "Oil",
+                            "time": 1440,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                200808,
+                                201048,
+                                201024,
+                                201264
+                            ]
+                        }
+                    }
+                ],
+                "1": [
+                    {
+                        "payment": 554.7671473239889,
+                        "trade": {
+                            "origin_port": {
+                                "name": "Fujairah-ca26fade3b91",
+                                "latitude": 25.16933,
+                                "longitude": 56.3799
+                            },
+                            "destination_port": {
+                                "name": "Suez-4ad378ddd198",
+                                "latitude": 29.93064,
+                                "longitude": 32.52826
+                            },
+                            "amount": 65570.84886519174,
+                            "cargo_type": "Oil",
+                            "time": 1440,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                126936,
+                                127176,
+                                127176,
+                                127416
+                            ]
+                        }
+                    },
+                    {
+                        "payment": 32.626717120167626,
+                        "trade": {
+                            "origin_port": {
+                                "name": "Primorsk-1745900bf09d",
+                                "latitude": 60.33146,
+                                "longitude": 28.69689
+                            },
+                            "destination_port": {
+                                "name": "Skoldvik-9ac362d9504c",
+                                "latitude": 60.30545,
+                                "longitude": 25.55381
+                            },
+                            "amount": 103038.35935290274,
+                            "cargo_type": "Oil",
+                            "time": 1440,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                118416,
+                                118656,
+                                118440,
+                                118680
+                            ]
+                        }
+                    },
+                    {
+                        "payment": 9.99541974955785,
+                        "trade": {
+                            "origin_port": {
+                                "name": "Smiths Bluff-8218c47cd56c",
+                                "latitude": 30.01217,
+                                "longitude": -93.96885
+                            },
+                            "destination_port": {
+                                "name": "Port Neches-b1543f00d56b",
+                                "latitude": 29.99361,
+                                "longitude": -93.92303
+                            },
+                            "amount": 73177.52015788862,
+                            "cargo_type": "Oil",
+                            "time": 1440,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                22152,
+                                22392,
+                                22176,
+                                22416
+                            ]
+                        }
+                    },
+                    {
+                        "payment": 16.087864410954495,
+                        "trade": {
+                            "origin_port": {
+                                "name": "Port Angeles-084976ad6a70",
+                                "latitude": 48.12987,
+                                "longitude": -123.42481
+                            },
+                            "destination_port": {
+                                "name": "Cherry Point-69fb11f0514e",
+                                "latitude": 48.86221,
+                                "longitude": -122.75981
+                            },
+                            "amount": 42419.139568226215,
+                            "cargo_type": "Oil",
+                            "time": 1440,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                148320,
+                                148560,
+                                148320,
+                                148560
+                            ]
+                        }
+                    }
+                ],
+                "2": []
+            },
+            {
+                "0": [],
+                "1": [
+                    {
+                        "payment": 220.85545485483442,
+                        "trade": {
+                            "origin_port": {
+                                "name": "Kozmino-62a166ce6f35",
+                                "latitude": 42.71825,
+                                "longitude": 133.01263
+                            },
+                            "destination_port": {
+                                "name": "Qingdao-910e8b237492",
+                                "latitude": 36.04042,
+                                "longitude": 120.25189
+                            },
+                            "amount": 97107.11841037411,
+                            "cargo_type": "Oil",
+                            "time": 2160,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                122352,
+                                122592,
+                                122448,
+                                122688
+                            ]
+                        }
+                    },
+                    {
+                        "payment": 719.9513746459554,
+                        "trade": {
+                            "origin_port": {
+                                "name": "Ras Laffan-cb891923a010",
+                                "latitude": 25.90756,
+                                "longitude": 51.62051
+                            },
+                            "destination_port": {
+                                "name": "Port Klang-083f09688b4c",
+                                "latitude": 2.89587,
+                                "longitude": 101.31015
+                            },
+                            "amount": 106859.74569524104,
+                            "cargo_type": "Oil",
+                            "time": 2160,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                124872,
+                                125112,
+                                125232,
+                                125472
+                            ]
+                        }
+                    }
+                ],
+                "2": [
+                    {
+                        "payment": 118.65803543730202,
+                        "trade": {
+                            "origin_port": {
+                                "name": "Yokohama-aa8f1ab13ec7",
+                                "latitude": 35.42166,
+                                "longitude": 139.67283
+                            },
+                            "destination_port": {
+                                "name": "Kiire-c1d11e2429fa",
+                                "latitude": 31.38772,
+                                "longitude": 130.55385
+                            },
+                            "amount": 91308.14332219973,
+                            "cargo_type": "Oil",
+                            "time": 2160,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                14832,
+                                15072,
+                                14904,
+                                15144
+                            ]
+                        }
+                    },
+                    {
+                        "payment": 273.36174069943525,
+                        "trade": {
+                            "origin_port": {
+                                "name": "Al Basrah-1fc976f51917",
+                                "latitude": 29.67187,
+                                "longitude": 48.83146
+                            },
+                            "destination_port": {
+                                "name": "Vadinar-95b0ec8946e3",
+                                "latitude": 22.48839,
+                                "longitude": 69.6867
+                            },
+                            "amount": 123284.10333480821,
+                            "cargo_type": "Oil",
+                            "time": 2160,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                93144,
+                                93384,
+                                93312,
+                                93552
+                            ]
+                        }
+                    },
+                    {
+                        "payment": 1013.1504535858643,
+                        "trade": {
+                            "origin_port": {
+                                "name": "Algeciras-f1a4cd999637",
+                                "latitude": 36.15203,
+                                "longitude": -5.41526
+                            },
+                            "destination_port": {
+                                "name": "Port Ingleside-768a671ec8e5",
+                                "latitude": 27.84022,
+                                "longitude": -97.22681
+                            },
+                            "amount": 34599.89029678005,
+                            "cargo_type": "Oil",
+                            "time": 2160,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                68328,
+                                68568,
+                                68736,
+                                68976
+                            ]
+                        }
+                    }
+                ]
+            },
+            {
+                "0": [],
+                "1": [
+                    {
+                        "payment": 750.6566961534038,
+                        "trade": {
+                            "origin_port": {
+                                "name": "Zirku Island-a43755386268",
+                                "latitude": 24.96848,
+                                "longitude": 53.0652
+                            },
+                            "destination_port": {
+                                "name": "Singapore-bfe15a9e31a0",
+                                "latitude": 1.32447,
+                                "longitude": 103.82839
+                            },
+                            "amount": 118583.21916468801,
+                            "cargo_type": "Oil",
+                            "time": 2880,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                129312,
+                                129552,
+                                129648,
+                                129888
+                            ]
+                        }
+                    },
+                    {
+                        "payment": 692.7642461660122,
+                        "trade": {
+                            "origin_port": {
+                                "name": "Khor Fakkan-6317b39e2dcf",
+                                "latitude": 25.36377,
+                                "longitude": 56.37766
+                            },
+                            "destination_port": {
+                                "name": "Tanjung Pelepas-71ae886ba35d",
+                                "latitude": 1.34033,
+                                "longitude": 103.54542
+                            },
+                            "amount": 50993.42707202855,
+                            "cargo_type": "Oil",
+                            "time": 2880,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                164376,
+                                164616,
+                                164664,
+                                164904
+                            ]
+                        }
+                    },
+                    {
+                        "payment": 200.91822363742398,
+                        "trade": {
+                            "origin_port": {
+                                "name": "La Paloma-38165a549d3a",
+                                "latitude": -34.65399,
+                                "longitude": -54.14605
+                            },
+                            "destination_port": {
+                                "name": "Angra Dos Reis-d87b536f17a4",
+                                "latitude": -23.00852,
+                                "longitude": -44.28049
+                            },
+                            "amount": 119329.74434442769,
+                            "cargo_type": "Oil",
+                            "time": 2880,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                144144,
+                                144384,
+                                144240,
+                                144480
+                            ]
+                        }
+                    }
+                ],
+                "2": [
+                    {
+                        "payment": 11.476573234454424,
+                        "trade": {
+                            "origin_port": {
+                                "name": "Smiths Bluff-8218c47cd56c",
+                                "latitude": 30.01217,
+                                "longitude": -93.96885
+                            },
+                            "destination_port": {
+                                "name": "Port Arthur-26aba1bc33e8",
+                                "latitude": 29.89246,
+                                "longitude": -93.90882
+                            },
+                            "amount": 52625.063032035985,
+                            "cargo_type": "Oil",
+                            "time": 2880,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                60984,
+                                61224,
+                                60984,
+                                61224
+                            ]
+                        }
+                    },
+                    {
+                        "payment": 2858.4871344909293,
+                        "trade": {
+                            "origin_port": {
+                                "name": "Mina Al Ahmadi Sea Island-98bd957bb207",
+                                "latitude": 29.12694,
+                                "longitude": 48.3056
+                            },
+                            "destination_port": {
+                                "name": "Singapore-bfe15a9e31a0",
+                                "latitude": 1.32447,
+                                "longitude": 103.82839
+                            },
+                            "amount": 170853.1959095702,
+                            "cargo_type": "Oil",
+                            "time": 2880,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                17448,
+                                17688,
+                                17736,
+                                17976
+                            ]
+                        }
+                    }
+                ]
+            },
+            {
+                "0": [],
+                "1": [
+                    {
+                        "payment": 694.1651423583515,
+                        "trade": {
+                            "origin_port": {
+                                "name": "Fujairah-ca26fade3b91",
+                                "latitude": 25.16933,
+                                "longitude": 56.3799
+                            },
+                            "destination_port": {
+                                "name": "Tanjung Pelepas-71ae886ba35d",
+                                "latitude": 1.34033,
+                                "longitude": 103.54542
+                            },
+                            "amount": 63295.91879272864,
+                            "cargo_type": "Oil",
+                            "time": 3600,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                192240,
+                                192480,
+                                192576,
+                                192816
+                            ]
+                        }
+                    }
+                ],
+                "2": [
+                    {
+                        "payment": 772.4089865217254,
+                        "trade": {
+                            "origin_port": {
+                                "name": "Ras Tanura-601e8fb13c3c",
+                                "latitude": 26.65957,
+                                "longitude": 50.22456
+                            },
+                            "destination_port": {
+                                "name": "Singapore-bfe15a9e31a0",
+                                "latitude": 1.32447,
+                                "longitude": 103.82839
+                            },
+                            "amount": 70385.2078045743,
+                            "cargo_type": "Oil",
+                            "time": 3600,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                13632,
+                                13872,
+                                13872,
+                                14112
+                            ]
+                        }
+                    },
+                    {
+                        "payment": 34.039077390706986,
+                        "trade": {
+                            "origin_port": {
+                                "name": "Jing Tang-d63c27036294",
+                                "latitude": 39.21622,
+                                "longitude": 119.03911
+                            },
+                            "destination_port": {
+                                "name": "Changxingdao-5c16d1a2a8e9",
+                                "latitude": 39.52577,
+                                "longitude": 121.26937
+                            },
+                            "amount": 65665.79928022088,
+                            "cargo_type": "Oil",
+                            "time": 3600,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                13944,
+                                14184,
+                                13944,
+                                14184
+                            ]
+                        }
+                    },
+                    {
+                        "payment": 1160.34970305054,
+                        "trade": {
+                            "origin_port": {
+                                "name": "Canuku Terminal-f70399be83e6",
+                                "latitude": -7.09132,
+                                "longitude": 12.46762
+                            },
+                            "destination_port": {
+                                "name": "Nemrut Bay-e89f801cf7ac",
+                                "latitude": 38.76748,
+                                "longitude": 26.9189
+                            },
+                            "amount": 116059.05026505183,
+                            "cargo_type": "Oil",
+                            "time": 3600,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                24360,
+                                24600,
+                                24864,
+                                25104
+                            ]
+                        }
+                    },
+                    {
+                        "payment": 771.6773688515639,
+                        "trade": {
+                            "origin_port": {
+                                "name": "Ras Tanura-601e8fb13c3c",
+                                "latitude": 26.65957,
+                                "longitude": 50.22456
+                            },
+                            "destination_port": {
+                                "name": "Singapore-bfe15a9e31a0",
+                                "latitude": 1.32447,
+                                "longitude": 103.82839
+                            },
+                            "amount": 96394.32598418501,
+                            "cargo_type": "Oil",
+                            "time": 3600,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                102096,
+                                102336,
+                                102336,
+                                102576
+                            ]
+                        }
+                    }
+                ]
+            },
+            {
+                "0": [],
+                "1": [
+                    {
+                        "payment": 790.484752483439,
+                        "trade": {
+                            "origin_port": {
+                                "name": "Mina Al Ahmadi Sea Island-98bd957bb207",
+                                "latitude": 29.12694,
+                                "longitude": 48.3056
+                            },
+                            "destination_port": {
+                                "name": "Singapore-bfe15a9e31a0",
+                                "latitude": 1.32447,
+                                "longitude": 103.82839
+                            },
+                            "amount": 26452.435055495887,
+                            "cargo_type": "Oil",
+                            "time": 4320,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                168504,
+                                168744,
+                                168744,
+                                168984
+                            ]
+                        }
+                    },
+                    {
+                        "payment": 275.38653426959416,
+                        "trade": {
+                            "origin_port": {
+                                "name": "Ust-Luga-e9ea2bf59471",
+                                "latitude": 59.73981,
+                                "longitude": 28.3299
+                            },
+                            "destination_port": {
+                                "name": "Rotterdam-92c070ce8e92",
+                                "latitude": 51.92699,
+                                "longitude": 4.18716
+                            },
+                            "amount": 104870.2488746404,
+                            "cargo_type": "Oil",
+                            "time": 4320,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                163992,
+                                164232,
+                                164136,
+                                164376
+                            ]
+                        }
+                    },
+                    {
+                        "payment": 60.23300703515889,
+                        "trade": {
+                            "origin_port": {
+                                "name": "Galveston-80916f3912d8",
+                                "latitude": 29.31778,
+                                "longitude": -94.79335
+                            },
+                            "destination_port": {
+                                "name": "Port Fourchon-39947b92ce27",
+                                "latitude": 29.1301,
+                                "longitude": -90.20065
+                            },
+                            "amount": 55711.26186830117,
+                            "cargo_type": "Oil",
+                            "time": 4320,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                168672,
+                                168912,
+                                168720,
+                                168960
+                            ]
+                        }
+                    }
+                ],
+                "2": [
+                    {
+                        "payment": 352.2027938386529,
+                        "trade": {
+                            "origin_port": {
+                                "name": "Covenas-76285da2ae54",
+                                "latitude": 9.49782,
+                                "longitude": -75.76117
+                            },
+                            "destination_port": {
+                                "name": "Port Aransas-29a8105fada5",
+                                "latitude": 27.83948,
+                                "longitude": -97.07786
+                            },
+                            "amount": 29861.404075358194,
+                            "cargo_type": "Oil",
+                            "time": 4320,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                95592,
+                                95832,
+                                95712,
+                                95952
+                            ]
+                        }
+                    },
+                    {
+                        "payment": 1722.9788641203886,
+                        "trade": {
+                            "origin_port": {
+                                "name": "Galveston-80916f3912d8",
+                                "latitude": 29.31778,
+                                "longitude": -94.79335
+                            },
+                            "destination_port": {
+                                "name": "Saint John-99b5182a722a",
+                                "latitude": 45.23645,
+                                "longitude": -66.01678
+                            },
+                            "amount": 137358.97089197382,
+                            "cargo_type": "Oil",
+                            "time": 4320,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                46992,
+                                47232,
+                                47208,
+                                47448
+                            ]
+                        }
+                    }
+                ]
+            },
+            {
+                "0": [
+                    {
+                        "payment": 96.65579553474392,
+                        "trade": {
+                            "origin_port": {
+                                "name": "Ras Tanura-601e8fb13c3c",
+                                "latitude": 26.65957,
+                                "longitude": 50.22456
+                            },
+                            "destination_port": {
+                                "name": "Fujairah-ca26fade3b91",
+                                "latitude": 25.16933,
+                                "longitude": 56.3799
+                            },
+                            "amount": 74174.2636914695,
+                            "cargo_type": "Oil",
+                            "time": 5040,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                201216,
+                                201456,
+                                201288,
+                                201528
+                            ]
+                        }
+                    }
+                ],
+                "1": [],
+                "2": [
+                    {
+                        "payment": 39.86001053202384,
+                        "trade": {
+                            "origin_port": {
+                                "name": "Mina Al Fahl-2478ba60dc4c",
+                                "latitude": 23.66492,
+                                "longitude": 58.53492
+                            },
+                            "destination_port": {
+                                "name": "Fujairah-ca26fade3b91",
+                                "latitude": 25.16933,
+                                "longitude": 56.3799
+                            },
+                            "amount": 71013.64638496058,
+                            "cargo_type": "Oil",
+                            "time": 5040,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                128112,
+                                128352,
+                                128256,
+                                128496
+                            ]
+                        }
+                    },
+                    {
+                        "payment": 101.23541530300953,
+                        "trade": {
+                            "origin_port": {
+                                "name": "Sidi Kerir-552c943d8b08",
+                                "latitude": 31.11752,
+                                "longitude": 29.61309
+                            },
+                            "destination_port": {
+                                "name": "Ceyhan-3b530c868db0",
+                                "latitude": 36.86564,
+                                "longitude": 35.93382
+                            },
+                            "amount": 36714.47079291683,
+                            "cargo_type": "Oil",
+                            "time": 5040,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                167760,
+                                168000,
+                                167856,
+                                168096
+                            ]
+                        }
+                    },
+                    {
+                        "payment": 142.09764034508316,
+                        "trade": {
+                            "origin_port": {
+                                "name": "Malta Freeport-d3fb8c6279a1",
+                                "latitude": 35.8254,
+                                "longitude": 14.5448
+                            },
+                            "destination_port": {
+                                "name": "Trieste-2aed856f346e",
+                                "latitude": 45.627,
+                                "longitude": 13.76048
+                            },
+                            "amount": 27757.786890656356,
+                            "cargo_type": "Oil",
+                            "time": 5040,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                59088,
+                                59328,
+                                59208,
+                                59448
+                            ]
+                        }
+                    },
+                    {
+                        "payment": 104.53378549222465,
+                        "trade": {
+                            "origin_port": {
+                                "name": "Mongstad-8338fd2d4afb",
+                                "latitude": 60.81275,
+                                "longitude": 5.03783
+                            },
+                            "destination_port": {
+                                "name": "Grimsby-d6f49c2e1bad",
+                                "latitude": 53.58196,
+                                "longitude": -0.07119
+                            },
+                            "amount": 55849.267390862144,
+                            "cargo_type": "Oil",
+                            "time": 5040,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                108240,
+                                108480,
+                                108336,
+                                108576
+                            ]
+                        }
+                    }
+                ]
+            },
+            {
+                "0": [],
+                "1": [
+                    {
+                        "payment": 15.021658965018151,
+                        "trade": {
+                            "origin_port": {
+                                "name": "Port Aransas-29a8105fada5",
+                                "latitude": 27.83948,
+                                "longitude": -97.07786
+                            },
+                            "destination_port": {
+                                "name": "Corpus Christi-7a30d31f121f",
+                                "latitude": 27.81704,
+                                "longitude": -97.40814
+                            },
+                            "amount": 60792.055695304436,
+                            "cargo_type": "Oil",
+                            "time": 5760,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                184104,
+                                184344,
+                                184104,
+                                184344
+                            ]
+                        }
+                    },
+                    {
+                        "payment": 213.41419533231317,
+                        "trade": {
+                            "origin_port": {
+                                "name": "Kozmino-62a166ce6f35",
+                                "latitude": 42.71825,
+                                "longitude": 133.01263
+                            },
+                            "destination_port": {
+                                "name": "Zhoushan-611472facb34",
+                                "latitude": 30.03737,
+                                "longitude": 122.14654
+                            },
+                            "amount": 53265.159149558946,
+                            "cargo_type": "Oil",
+                            "time": 5760,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                174792,
+                                175032,
+                                174864,
+                                175104
+                            ]
+                        }
+                    }
+                ],
+                "2": [
+                    {
+                        "payment": 34.25167830346102,
+                        "trade": {
+                            "origin_port": {
+                                "name": "Rio De Janeiro-ef2da6007e09",
+                                "latitude": -22.81508,
+                                "longitude": -43.18133
+                            },
+                            "destination_port": {
+                                "name": "Sao Sebastiao-0bca302110e4",
+                                "latitude": -23.80617,
+                                "longitude": -45.3935
+                            },
+                            "amount": 33080.5187450792,
+                            "cargo_type": "Oil",
+                            "time": 5760,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                83064,
+                                83304,
+                                83112,
+                                83352
+                            ]
+                        }
+                    },
+                    {
+                        "payment": 308.25892838258056,
+                        "trade": {
+                            "origin_port": {
+                                "name": "Rio De Janeiro-ef2da6007e09",
+                                "latitude": -22.81508,
+                                "longitude": -43.18133
+                            },
+                            "destination_port": {
+                                "name": "Sao Francisco-a1636f5a0ca0",
+                                "latitude": -26.23548,
+                                "longitude": -48.63853
+                            },
+                            "amount": 131156.54273207227,
+                            "cargo_type": "Oil",
+                            "time": 5760,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                71568,
+                                71808,
+                                71640,
+                                71880
+                            ]
+                        }
+                    },
+                    {
+                        "payment": 60.510968322739075,
+                        "trade": {
+                            "origin_port": {
+                                "name": "Teesport-736acdd7afa2",
+                                "latitude": 54.62518,
+                                "longitude": -1.16052
+                            },
+                            "destination_port": {
+                                "name": "Immingham-03154ce774bb",
+                                "latitude": 53.63301,
+                                "longitude": -0.18833
+                            },
+                            "amount": 86337.25252450835,
+                            "cargo_type": "Oil",
+                            "time": 5760,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                2280,
+                                2520,
+                                2304,
+                                2544
+                            ]
+                        }
+                    }
+                ]
+            },
+            {
+                "0": [],
+                "1": [],
+                "2": [
+                    {
+                        "payment": 541.2476580963311,
+                        "trade": {
+                            "origin_port": {
+                                "name": "Novorossiysk-45a5021eee47",
+                                "latitude": 44.7148,
+                                "longitude": 37.81347
+                            },
+                            "destination_port": {
+                                "name": "Nemrut Bay-e89f801cf7ac",
+                                "latitude": 38.76748,
+                                "longitude": 26.9189
+                            },
+                            "amount": 98065.700384442,
+                            "cargo_type": "Oil",
+                            "time": 6480,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                384,
+                                624,
+                                504,
+                                744
+                            ]
+                        }
+                    },
+                    {
+                        "payment": 16.875311211978833,
+                        "trade": {
+                            "origin_port": {
+                                "name": "Al Muajjiz Terminal-e69352f09461",
+                                "latitude": 23.81309,
+                                "longitude": 38.40698
+                            },
+                            "destination_port": {
+                                "name": "King Fahd Port-34821f7aa799",
+                                "latitude": 23.93815,
+                                "longitude": 38.24284
+                            },
+                            "amount": 111878.8027735233,
+                            "cargo_type": "Oil",
+                            "time": 6480,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                120984,
+                                121224,
+                                121008,
+                                121248
+                            ]
+                        }
+                    },
+                    {
+                        "payment": 236.9762095162971,
+                        "trade": {
+                            "origin_port": {
+                                "name": "Porto Acu-db9c1341eaaa",
+                                "latitude": -21.83813,
+                                "longitude": -40.99457
+                            },
+                            "destination_port": {
+                                "name": "Sao Sebastiao-0bca302110e4",
+                                "latitude": -23.80617,
+                                "longitude": -45.3935
+                            },
+                            "amount": 31410.94388903963,
+                            "cargo_type": "Oil",
+                            "time": 6480,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                9168,
+                                9408,
+                                9216,
+                                9456
+                            ]
+                        }
+                    },
+                    {
+                        "payment": 48.132589373337474,
+                        "trade": {
+                            "origin_port": {
+                                "name": "Puerto La Cruz-04e122120f88",
+                                "latitude": 10.23195,
+                                "longitude": -64.633
+                            },
+                            "destination_port": {
+                                "name": "El Palito-45b3dde23b18",
+                                "latitude": 10.4968,
+                                "longitude": -68.11569
+                            },
+                            "amount": 29292.33835153941,
+                            "cargo_type": "Oil",
+                            "time": 6480,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                84144,
+                                84384,
+                                84144,
+                                84384
+                            ]
+                        }
+                    }
+                ]
+            },
+            {
+                "0": [],
+                "1": [],
+                "2": [
+                    {
+                        "payment": 36.79261781713886,
+                        "trade": {
+                            "origin_port": {
+                                "name": "Port Dickson-47b3d9faec98",
+                                "latitude": 2.53007,
+                                "longitude": 101.78798
+                            },
+                            "destination_port": {
+                                "name": "Singapore-bfe15a9e31a0",
+                                "latitude": 1.32447,
+                                "longitude": 103.82839
+                            },
+                            "amount": 39462.15847174516,
+                            "cargo_type": "Oil",
+                            "time": 7200,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                154368,
+                                154608,
+                                154368,
+                                154608
+                            ]
+                        }
+                    },
+                    {
+                        "payment": 21.89128586035436,
+                        "trade": {
+                            "origin_port": {
+                                "name": "Houston-453dd058edad",
+                                "latitude": 29.69145,
+                                "longitude": -95.01914
+                            },
+                            "destination_port": {
+                                "name": "Port Neches-b1543f00d56b",
+                                "latitude": 29.99361,
+                                "longitude": -93.92303
+                            },
+                            "amount": 73618.39981310329,
+                            "cargo_type": "Oil",
+                            "time": 7200,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                110544,
+                                110784,
+                                110568,
+                                110808
+                            ]
+                        }
+                    },
+                    {
+                        "payment": 4627.632193855021,
+                        "trade": {
+                            "origin_port": {
+                                "name": "Ras Tanura-601e8fb13c3c",
+                                "latitude": 26.65957,
+                                "longitude": 50.22456
+                            },
+                            "destination_port": {
+                                "name": "Gwangyang-11ecb2ca4f7f",
+                                "latitude": 34.8831,
+                                "longitude": 127.70313
+                            },
+                            "amount": 192404.86502709019,
+                            "cargo_type": "Oil",
+                            "time": 7200,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                14568,
+                                14808,
+                                15120,
+                                15360
+                            ]
+                        }
+                    },
+                    {
+                        "payment": 715.2752353391043,
+                        "trade": {
+                            "origin_port": {
+                                "name": "Whiffen Head-9d95e17d2034",
+                                "latitude": 47.77188,
+                                "longitude": -54.01636
+                            },
+                            "destination_port": {
+                                "name": "Augusta-facbcc9badd3",
+                                "latitude": 37.20765,
+                                "longitude": 15.20693
+                            },
+                            "amount": 60701.02717201068,
+                            "cargo_type": "Oil",
+                            "time": 7200,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                115152,
+                                115392,
+                                115464,
+                                115704
+                            ]
+                        }
+                    }
+                ]
+            },
+            {
+                "0": [],
+                "1": [],
+                "2": [
+                    {
+                        "payment": 322.89048294916665,
+                        "trade": {
+                            "origin_port": {
+                                "name": "Hound Point-199882e34b06",
+                                "latitude": 56.00595,
+                                "longitude": -3.36092
+                            },
+                            "destination_port": {
+                                "name": "Rotterdam-92c070ce8e92",
+                                "latitude": 51.92699,
+                                "longitude": 4.18716
+                            },
+                            "amount": 146331.49538249188,
+                            "cargo_type": "Oil",
+                            "time": 7920,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                46248,
+                                46488,
+                                46392,
+                                46632
+                            ]
+                        }
+                    },
+                    {
+                        "payment": 2478.003152731816,
+                        "trade": {
+                            "origin_port": {
+                                "name": "Fujairah-ca26fade3b91",
+                                "latitude": 25.16933,
+                                "longitude": 56.3799
+                            },
+                            "destination_port": {
+                                "name": "Tanjung Pelepas-71ae886ba35d",
+                                "latitude": 1.34033,
+                                "longitude": 103.54542
+                            },
+                            "amount": 24259.24708114786,
+                            "cargo_type": "Oil",
+                            "time": 7920,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                57912,
+                                58152,
+                                58248,
+                                58488
+                            ]
+                        }
+                    },
+                    {
+                        "payment": 348.98613549841815,
+                        "trade": {
+                            "origin_port": {
+                                "name": "Puerto Jose-bd9e62d67225",
+                                "latitude": 10.09938,
+                                "longitude": -64.8722
+                            },
+                            "destination_port": {
+                                "name": "Punta Cardon-a3b8a4418174",
+                                "latitude": 11.62037,
+                                "longitude": -70.23613
+                            },
+                            "amount": 92585.50240847922,
+                            "cargo_type": "Oil",
+                            "time": 7920,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                60936,
+                                61176,
+                                61008,
+                                61248
+                            ]
+                        }
+                    }
+                ]
+            },
+            {
+                "0": [],
+                "1": [
+                    {
+                        "payment": 2856.7685907087516,
+                        "trade": {
+                            "origin_port": {
+                                "name": "Mina Al Ahmadi Sea Island-98bd957bb207",
+                                "latitude": 29.12694,
+                                "longitude": 48.3056
+                            },
+                            "destination_port": {
+                                "name": "Singapore-bfe15a9e31a0",
+                                "latitude": 1.32447,
+                                "longitude": 103.82839
+                            },
+                            "amount": 154849.66024634606,
+                            "cargo_type": "Oil",
+                            "time": 8640,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                194784,
+                                195024,
+                                195072,
+                                195312
+                            ]
+                        }
+                    },
+                    {
+                        "payment": 335.62563777990846,
+                        "trade": {
+                            "origin_port": {
+                                "name": "Novorossiysk CPC-3b26a9570fd1",
+                                "latitude": 44.6354,
+                                "longitude": 37.64608
+                            },
+                            "destination_port": {
+                                "name": "Trieste-2aed856f346e",
+                                "latitude": 45.627,
+                                "longitude": 13.76048
+                            },
+                            "amount": 54412.850390811895,
+                            "cargo_type": "Oil",
+                            "time": 8640,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                196656,
+                                196896,
+                                197016,
+                                197256
+                            ]
+                        }
+                    }
+                ],
+                "2": [
+                    {
+                        "payment": 24.024761068497188,
+                        "trade": {
+                            "origin_port": {
+                                "name": "Port Arthur-26aba1bc33e8",
+                                "latitude": 29.89246,
+                                "longitude": -93.90882
+                            },
+                            "destination_port": {
+                                "name": "Houston-453dd058edad",
+                                "latitude": 29.69145,
+                                "longitude": -95.01914
+                            },
+                            "amount": 63045.87563477348,
+                            "cargo_type": "Oil",
+                            "time": 8640,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                163536,
+                                163776,
+                                163536,
+                                163776
+                            ]
+                        }
+                    },
+                    {
+                        "payment": 805.6391816781471,
+                        "trade": {
+                            "origin_port": {
+                                "name": "Mina Al Ahmadi-2d893ce729f6",
+                                "latitude": 29.0931,
+                                "longitude": 48.1562
+                            },
+                            "destination_port": {
+                                "name": "Karachi-d8f24cbce54f",
+                                "latitude": 24.81243,
+                                "longitude": 66.9803
+                            },
+                            "amount": 127198.10172008215,
+                            "cargo_type": "Oil",
+                            "time": 8640,
+                            "probability": 1,
+                            "status": 1,
+                            "time_window": [
+                                198888,
+                                199128,
+                                199032,
+                                199272
+                            ]
+                        }
+                    }
+                ]
+            }
+        ],
+        "penalty": {
+            "0": 0,
+            "1": 0,
+            "2": 0
+        }
+    }
+}
