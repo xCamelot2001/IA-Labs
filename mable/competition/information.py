@@ -73,7 +73,7 @@ class CompanyHeadquarters:
         """
         return self._engine.world.network.get_distance(location_one, location_two)
 
-    def get_journey_location(self, journey, vessel):
+    def get_journey_location(self, journey, vessel, time=None):
         """
         Get the current location of a vessel on a journey.
 
@@ -87,10 +87,15 @@ class CompanyHeadquarters:
         :type journey: OnJourney
         :param vessel: The vessel that is performing the journey.
         :type vessel: Vessel
+        :param time: The time at which the journey location will be calculated. Default, i.e. None, is the current time.
+        :type time: float
         :return: The current location the vessel is in.
         :rtype: Location
         """
-        return self._engine.world.network.get_journey_location(self, journey, vessel, self.current_time)
+        if time is None:
+            time = self.current_time
+        current_location = self._engine.world.network.get_journey_location(journey, vessel, time)
+        return current_location
 
     def get_companies(self):
         """

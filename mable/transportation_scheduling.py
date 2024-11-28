@@ -4,10 +4,10 @@ Shipping operation
 
 from __future__ import annotations
 
-import copy
 from enum import IntEnum
 import math
-from typing import TYPE_CHECKING, List
+from itertools import product
+from typing import TYPE_CHECKING, List, Tuple
 
 import attrs
 import networkx as nx
@@ -33,6 +33,10 @@ class TransportationStartFinishIndicator(IntEnum):
     START = 0
     FINISH = 1
 
+    def __repr__(self):
+        str_repr = f"<{self.name}>"
+        return str_repr
+
 
 @attrs.define(kw_only=True)
 class CurrentState:
@@ -52,7 +56,7 @@ class Schedule(SimulationEngineAware):
     The schedule of a vessel.
     """
 
-    def __init__(self, vessel, current_time=0, schedule=None):
+    def __init__(self, vessel, current_time=0, creation_time=0, schedule=None):
         """
         **Note**: Requires the engine to be set to work.
 
@@ -69,6 +73,7 @@ class Schedule(SimulationEngineAware):
             self._stn = schedule
         self._vessel = vessel
         self._time_schedule_head = current_time
+        self._creation_time = creation_time
         self._next_event = None
         self._last_event = None
 
@@ -91,10 +96,11 @@ class Schedule(SimulationEngineAware):
         :return: The copy
         :rtype: Schedule
         """
-        copy_with_deepcopy_stn = Schedule(
-            self._vessel, current_time=self._time_schedule_head, schedule=copy.deepcopy(self._stn))
-        copy_with_deepcopy_stn.set_engine(self._engine)
-        return copy_with_deepcopy_stn
+        copy_with_copy_stn = Schedule(
+            self._vessel, current_time=self._time_schedule_head, creation_time=self._creation_time,
+            schedule=self._stn.copy())
+        copy_with_copy_stn.set_engine(self._engine)
+        return copy_with_copy_stn
 
     def _shift_task_push(self, location, is_right_direction=True):
         shift_amount = 1
@@ -209,7 +215,8 @@ class Schedule(SimulationEngineAware):
         """
         if location == 1:
             destination = self._stn.nodes[(1, TransportationStartFinishIndicator.START)]["trade"].destination_port
-            travel_distance = self._engine.world.network.get_distance(self._vessel.location, destination)
+            vessel_location = self._engine.world.network.get_vessel_location(self._vessel, self._engine.world.current_time)
+            travel_distance = self._engine.world.network.get_distance(vessel_location, destination)
             travel_time = self._vessel.get_travel_time(travel_distance)
             arrival_time = travel_time + self._time_schedule_head
             self._stn.add_edge((location, TransportationStartFinishIndicator.START), 0, weight=arrival_time)
@@ -326,6 +333,7 @@ class Schedule(SimulationEngineAware):
         """
         if len(self) == 0:
             self._time_schedule_head = self._engine.world.current_time
+            self._creation_time = self._engine.world.current_time
         if location_pick_up is None:
             location_pick_up = self.get_insertion_points()[-1]
         if location_drop_off is None:
@@ -351,6 +359,7 @@ class Schedule(SimulationEngineAware):
         # TODO self._ensure_location_validity(location_start, location_end)
         self._add_relocation_task(index_in_schedule)
 
+
     def completion_time(self):
         """
         Determine the time when the schedule completes.
@@ -359,12 +368,46 @@ class Schedule(SimulationEngineAware):
         :rtype: float
         """
         completion_time = 0
+        start_compensator = 0
+        finish_compensator = 0
         if len(self) > 0:
-            highest_task_index = max([x[0] for x in self._get_task_nodes()])
-            node_idx = (highest_task_index, TransportationStartFinishIndicator.FINISH)
-            edges_of_task = list(self._stn.edges(node_idx, data=True))
-            completion_time = - [e[2]["weight"] for e in edges_of_task if e[1] == 0][0]
-        return completion_time
+            task_combinations = ([(idx, indicator)
+                                  for idx, indicator
+                                  in product(range(2, self._number_tasks + 1),
+                                             [TransportationStartFinishIndicator.START,
+                                              TransportationStartFinishIndicator.FINISH])])
+            if (1, TransportationStartFinishIndicator.START) in self._stn:
+                edge_data = self._stn.get_edge_data((1, TransportationStartFinishIndicator.START), 0)
+                start_compensator = edge_data["weight"]
+                previous_task = (1, TransportationStartFinishIndicator.START)
+                task_combinations = [(1, TransportationStartFinishIndicator.FINISH)] + task_combinations
+            else:
+                edge_data = self._stn.get_edge_data((1, TransportationStartFinishIndicator.FINISH), 0)
+                previous_task = (1, TransportationStartFinishIndicator.FINISH)
+                finish_compensator = edge_data["weight"]
+            for idx, indicator in task_combinations:
+                current_task = (idx, indicator)
+                edge_data = self._stn.get_edge_data(
+                    current_task,
+                    previous_task)
+                completion_time += edge_data["weight"]
+                previous_task = current_task
+        head_adjusted_finish_compensator = finish_compensator + self._time_schedule_head
+        head_adjusted_start_compensator = start_compensator + self._time_schedule_head
+        adjusted_completion_time = completion_time
+        if finish_compensator < 0:
+            adjusted_completion_time += head_adjusted_finish_compensator
+        if head_adjusted_start_compensator < 0:
+            adjusted_completion_time += head_adjusted_start_compensator
+        adjusted_completion_time = - adjusted_completion_time
+        completion_time = - completion_time
+        k = self._time_schedule_head - self._creation_time
+        if completion_time > 0:
+            completion_time += -k + self._time_schedule_head
+            adjusted_completion_time += -k + self._time_schedule_head
+        if len(self) == 1:
+            adjusted_completion_time += self._creation_time
+        return adjusted_completion_time
 
     def _get_task_nodes(self):
         task_nodes = sorted([n for n in self._stn.nodes() if not n == 0])
@@ -440,11 +483,33 @@ class Schedule(SimulationEngineAware):
         if self._number_tasks == 0:
             insertion_points = [1]
         else:
+            # +1 for starting at one (not zero indexed), +1 for finishing task after last task
+            insertion_points_range_adjustment = 2
             if (1, TransportationStartFinishIndicator.START) in self._stn.nodes:
-                insertion_points = range(1, self._number_tasks + 2)
+                insertion_points = range(1, self._number_tasks + insertion_points_range_adjustment)
             else:
-                insertion_points = range(2, self._number_tasks + 2)
+                insertion_points = range(2, self._number_tasks + insertion_points_range_adjustment)
         return insertion_points
+
+    def get_simple_schedule(self):
+        """
+        Produce a simple overview of the schedule in the form of a list with drop off/pick up indicator and
+        associated cargo, e.g. [('PICK_UP', <trade>), ('DROP_OFF', <trade>)].
+
+        :return: The simple overview.
+        :rtype: List[Tuple[str, Trade]]
+        """
+        simple_schedule = [None] * self._number_tasks
+        for one_task in iter(self._stn):
+            task_idx = None
+            if isinstance(one_task, tuple):
+                task_idx = one_task[0]
+            if task_idx is not None:
+                if one_task[1] == TransportationStartFinishIndicator.FINISH:
+                    node = self._stn.nodes[one_task]
+                    location_type, current_trade = self._get_node_info(node)
+                    simple_schedule[task_idx - 1] = (location_type.name , current_trade)
+        return simple_schedule
 
     def __len__(self):
         """
@@ -501,8 +566,13 @@ class Schedule(SimulationEngineAware):
         :return The type of location and the trade.
         :rtype: Tuple[
         """
-        location_type = node["location_type"]
-        current_trade = node["trade"]
+        location_type = None
+        current_trade = None
+        try:
+            location_type = node["location_type"]
+            current_trade = node["trade"]
+        except KeyError:
+            pass  # Nothing to do
         return location_type, current_trade
 
     def _generate_arrival_or_travel_or_idle_event(self, node):

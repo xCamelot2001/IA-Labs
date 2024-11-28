@@ -449,12 +449,12 @@ class AuctionMarket(Market, SimulationEngineAware):
         for one_trade in trades:
             all_bids_for_current_trade = all_bids_per_trade[AuctionMarket._get_trade_index(one_trade, trades)]
             if len(all_bids_for_current_trade) > 0:
-                all_bids_for_trade = sorted(all_bids_for_current_trade, key=lambda b: b.amount)
-                smallest_bid_company = all_bids_for_trade[0].company
-                if len(all_bids_for_current_trade) > 1:
-                    payment = all_bids_for_current_trade[1].amount
+                all_bids_for_current_trade_sorted = sorted(all_bids_for_current_trade, key=lambda b: b.amount)
+                smallest_bid_company = all_bids_for_current_trade_sorted[0].company
+                if len(all_bids_for_current_trade_sorted) > 1:
+                    payment = all_bids_for_current_trade_sorted[1].amount
                 else:
-                    payment = all_bids_for_current_trade[0].amount
+                    payment = all_bids_for_current_trade_sorted[0].amount
                 trade_contract = Contract(payment=payment, trade=one_trade)
                 ledger[smallest_bid_company].append(trade_contract)
         return ledger

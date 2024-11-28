@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: MABLE
-Version: 0.0.5
+Version: 0.0.6
 Summary: Maritime Agent-Based Logistics Emulator.
 License: All rights reserved.
 Requires-Python: >=3.11

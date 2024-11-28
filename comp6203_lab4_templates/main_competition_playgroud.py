@@ -24,6 +24,7 @@ def build_specification():
     sim = environment.generate_simulation(
         specifications_builder,
         show_detailed_auction_outcome=True,
+        output_directory="./metrics",
         global_agent_timeout=60)
     sim.run()
 
