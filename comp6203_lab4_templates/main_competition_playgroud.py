@@ -20,7 +20,7 @@ def build_specification():
     specifications_builder.add_company(
         companies.TheScheduler.Data(
             companies.TheScheduler, the_scheduler_fleet, "The Scheduler LP",
-            profit_factor=1.4))
+            profit_factor=1.65))
     sim = environment.generate_simulation(
         specifications_builder,
         show_detailed_auction_outcome=True,

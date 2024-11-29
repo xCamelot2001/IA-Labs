@@ -38,7 +38,6 @@ class Companyn(TradingCompany):
 
         bids = []
         for trade in trades:
-            # Assign the vessel with the least cost to the trade
             best_vessel = min(
                 self._fleet,
                 key=lambda vessel: self.calculate_cost(vessel, trade)
@@ -46,7 +45,7 @@ class Companyn(TradingCompany):
             cost = self.calculate_cost(best_vessel, trade)
             bid_amount = self.create_bid(cost)
             bids.append(Bid(amount=bid_amount, trade=trade))
-    
+
         return bids
 
     def receive(self, contracts, auction_ledger=None, *args, **kwargs):
@@ -55,8 +54,8 @@ class Companyn(TradingCompany):
         """
         if auction_ledger:
             for company, won_trades in auction_ledger.items():
-                if company != self.name:
-                    print(f"Competitor {company} won trades: {won_trades}")
+                # if company != self.name:
+                print(f"Competitor {company} won trades: {won_trades}")
 
         trades = [contract.trade for contract in contracts]
         scheduling_proposal = self.find_schedules(trades)
@@ -103,35 +102,45 @@ class Companyn(TradingCompany):
     def propose_schedules(self, trades):
         schedules = {}
         scheduled_trades = []
-        i = 0
-        while i < len(trades):
-            current_trade = trades[i]
-            competing_vessels = self.find_competing_vessels(current_trade)
-            if len(competing_vessels) == 0:
-                print(f"{current_trade.origin_port.name.split('-')[0]}"
-                      f" -> {current_trade.destination_port.name.split('-')[0]}: No competing vessels found")
-            for one_company in competing_vessels:
-                distance = self.headquarters.get_network_distance(
-                          competing_vessels[one_company].location, current_trade.origin_port)
-                print(f"{current_trade.origin_port.name.split('-')[0]}"
-                      f" -> {current_trade.destination_port.name.split('-')[0]}:"
-                      f" {one_company.name}'s {competing_vessels[one_company].name}"
-                      f" in {competing_vessels[one_company].location.name.split('-')[0]}"
-                      f" at {distance} NM")
-            is_assigned = False
-            j = 0
-            while j < len(self._fleet) and not is_assigned:
-                current_vessel = self._fleet[j]
-                current_vessel_schedule = schedules.get(current_vessel, current_vessel.schedule)
-                new_schedule = current_vessel_schedule.copy()
+        costs = {}
+        
+        # Sort trades by earliest pickup time
+        sorted_trades = sorted(trades, key=lambda t: t.earliest_pickup)
+        
+        for current_trade in sorted_trades:
+            best_vessel = None
+            best_schedule = None
+            min_total_cost = float('inf')
+            
+            for vessel in self._fleet:
+                current_schedule = schedules.get(vessel, vessel.schedule)
+                new_schedule = current_schedule.copy()
                 new_schedule.add_transportation(current_trade)
+                
                 if new_schedule.verify_schedule():
-                    schedules[current_vessel] = new_schedule
-                    scheduled_trades.append(current_trade)
-                    is_assigned = True
-                j += 1
-            i += 1
-        return ScheduleProposal(schedules, scheduled_trades, {})
+                    # Calculate cost including idle time
+                    cost = self.calculate_cost(vessel, current_trade)
+                    
+                    # Add a penalty for idle time
+                    if len(current_schedule) > 0:
+                        last_event = current_schedule[-1]
+                        idle_time = current_trade.earliest_pickup - last_event.time
+                        idle_cost = vessel.get_cost(vessel.get_idle_consumption(idle_time))
+                        total_cost = cost + idle_cost
+                    else:
+                        total_cost = cost
+                    
+                    if total_cost < min_total_cost:
+                        min_total_cost = total_cost
+                        best_vessel = vessel
+                        best_schedule = new_schedule
+                        
+            if best_vessel:
+                schedules[best_vessel] = best_schedule
+                costs[current_trade] = min_total_cost * 1.5  # Apply profit margin
+                scheduled_trades.append(current_trade)
+        
+        return ScheduleProposal(schedules, scheduled_trades, costs)
 
     def find_schedules(self, trades):
         schedules = {}
@@ -165,14 +174,11 @@ class Companyn(TradingCompany):
         """
         Create a bid for a trade.
         """
-        profit_margin = 0.2
+        profit_margin = 10
         return cost * (1 + profit_margin)
 
     def calculate_cost(self, vessel, trade):
-        """
-        Calculate the cost of a trade for a given vessel.
-        """
-
+        # Get or calculate distance
         distance = self._distances.get((trade.origin_port, trade.destination_port))
         if distance is None:
             distance = self.headquarters.get_network_distance(
@@ -180,35 +186,36 @@ class Companyn(TradingCompany):
             )
             self._distances[(trade.origin_port, trade.destination_port)] = distance
 
+        # Calculate arrival time at pickup location
+        pickup_arrival_time = self.get_arrival_time(trade.origin_port, vessel.schedule, vessel)
+        
+        # Calculate idle time before pickup
+        pickup_idle_time = max(0, trade.earliest_pickup - pickup_arrival_time)
+        
+        # Loading time and costs
         loading_time = vessel.get_loading_time(trade.cargo_type, trade.amount)
         loading_consumption = vessel.get_loading_consumption(loading_time)
         loading_cost = vessel.get_cost(loading_consumption)
 
-        unloading_time = loading_time
-        unloading_consumption = vessel.get_unloading_consumption(unloading_time)
-        unloading_cost = vessel.get_cost(unloading_consumption)
-
+        # Travel time and costs to destination
         travel_time = vessel.get_travel_time(distance)
         travel_consumption = vessel.get_laden_consumption(travel_time, vessel.speed)
         travel_cost = vessel.get_cost(travel_consumption)
+        
+        # Calculate arrival time at dropoff
+        dropoff_arrival_time = pickup_arrival_time + loading_time + travel_time
+        dropoff_idle_time = max(0, trade.earliest_drop_off - dropoff_arrival_time)
+        # Unloading time and costs
+        unloading_time = loading_time  # Assuming unloading takes same time as loading
+        unloading_consumption = vessel.get_unloading_consumption(unloading_time)
+        unloading_cost = vessel.get_cost(unloading_consumption)
 
-        total_cost = loading_cost + unloading_cost + travel_cost
+        # Idle time costs
+        total_idle_time = pickup_idle_time + dropoff_idle_time
+        idle_consumption = vessel.get_idle_consumption(total_idle_time)
+        idle_cost = vessel.get_cost(idle_consumption)
 
-        # calculate the idle time
-        # idle time = earliest pickup - arrival time
-
-        # calculate arrival times
-
-        # pickup_idle_time = trade.earliest_pickup - pickup_arrival_time
-        # dropoff_idle_time = trade.earliest_dropoff - dropoff_arrival_time
-
-        # Calculate various costs
-        ballast_consumption = vessel.get_ballast_consumption(travel_time, vessel.speed)
-        # fuel_consumption = vessel.get_cost(cargo_amount)
-        # idle_consumption = vessel.get_idle_consumption(pickup_idle_time, dropoff_idle_time)
-        # travel_consumption = vessel.get_laden_consumption(travel_time, vessel_speed)
-        loading_consumption = vessel.get_loading_consumption(loading_time)
-        # unloading_consumption = vessel.get_unloading_consumption(loading_time)
+        total_cost = loading_cost + unloading_cost + travel_cost + idle_cost
 
         return total_cost
     
