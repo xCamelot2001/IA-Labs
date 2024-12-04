@@ -1,2 +1,0 @@
-[console_scripts]
-mable = mable.cli:main
