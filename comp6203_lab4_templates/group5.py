@@ -5,8 +5,7 @@ from mable.transportation_scheduling import Schedule
 from mable.shipping_market import TimeWindowTrade
 from mable.extensions.fuel_emissions import VesselWithEngine
 from mable.examples import environment, fleets
-
-import mable.simulation_space.universe
+# from mable.simulation_space import universe
 
 
 class Company5(TradingCompany):
