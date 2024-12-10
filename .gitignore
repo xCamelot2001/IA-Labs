@@ -1,2 +1,4 @@
 IA-cw
 .vscode
+precomputed_routes.pickle
+routing_graph_world_mask.pkl
