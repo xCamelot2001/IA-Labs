@@ -100,49 +100,48 @@ class Companyn(TradingCompany):
     #     return ScheduleProposal(schedules, scheduled_trades, costs)
 
     def propose_schedules(self, trades):
-        """
-        Propose schedules for the trades.
-        """
         schedules = {}
-        scheduled_trades = []
         costs = {}
-        
-        # Sort trades by earliest pickup time
-        sorted_trades = sorted(trades, key=lambda t: t.earliest_pickup)
-        
-        for current_trade in sorted_trades:
-            best_vessel = None
-            best_schedule = None
-            min_total_cost = float('inf')
-            
+        scheduled_trades = []
+        trade_options = {}
+
+        # Predict future trades from self._future_trades using MABLE data
+        future_trades = [trade for trade in self._future_trades if trade not in trades]
+
+        for current_trade in trades:
+            competing_vessels = self.find_competing_vessels(current_trade)
+            if not competing_vessels:
+                print(f"{current_trade.origin_port.name} -> {current_trade.destination_port.name}: No competing vessels found.")
+                continue
+
+            is_assigned = False
             for vessel in self._fleet:
                 current_schedule = schedules.get(vessel, vessel.schedule)
                 new_schedule = current_schedule.copy()
                 new_schedule.add_transportation(current_trade)
-                
+
                 if new_schedule.verify_schedule():
-                    # Calculate cost for the trade
-                    cost = self.calculate_cost(vessel, current_trade)
-                    
-                    # Add a penalty for idle time
-                    if len(current_schedule) > 0:
-                        last_event = current_schedule[-1]
-                        idle_time = current_trade.earliest_pickup - last_event.time
-                        idle_cost = vessel.get_cost(vessel.get_idle_consumption(idle_time))
-                        total_cost = cost + idle_cost
-                    else:
-                        total_cost = cost
-                    
-                    if total_cost < min_total_cost:
-                        min_total_cost = total_cost
-                        best_vessel = vessel
-                        best_schedule = new_schedule
-                        
-            if best_vessel:
-                schedules[best_vessel] = best_schedule
-                costs[current_trade] = min_total_cost * 1.5  # Apply profit margin
-                scheduled_trades.append(current_trade)
-        
+                    cost = self.predict_cost(vessel, current_trade)
+                    schedules[vessel] = new_schedule
+                    costs[current_trade] = cost
+                    scheduled_trades.append(current_trade)
+                    is_assigned = True
+                    break
+
+            if not is_assigned:
+                # Record trade options if it cannot be scheduled
+                trade_options[current_trade] = [
+                    (v, self.predict_cost(v, current_trade)) for v in self._fleet
+                ]
+
+        # Use MABLE's network and fleet data to analyze future trades
+        if future_trades:
+            best_future_trade = max(
+                future_trades,
+                key=lambda t: t.value / max(1, self.headquarters.get_network_distance(t.origin_port, t.destination_port))
+            )
+            print(f"Best future trade: {best_future_trade.origin_port.name} -> {best_future_trade.destination_port.name}")
+
         return ScheduleProposal(schedules, scheduled_trades, costs)
     
     """
@@ -217,7 +216,7 @@ class Companyn(TradingCompany):
         """
         Create a bid for a trade.
         """
-        profit_margin = 0.5
+        profit_margin = 0.1
         return cost * (1 + profit_margin)
 
     def calculate_cost(self, vessel, trade):
