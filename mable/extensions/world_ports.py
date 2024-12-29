@@ -258,6 +258,8 @@ class LatLongShippingNetwork(NetworkWithPortDict):
         :return: The distance or math.inf if no route between the two locations exists.
         :rtype: float
         """
+        if isinstance(location_one, OnJourney) or isinstance(location_two, OnJourney):
+            raise TypeError("OnJourney is not a valid fixed location. Two fixed locations required.")
         if not isinstance(location_one, Location):
             location_one = self.get_port(location_one)
         if not isinstance(location_two, Location):

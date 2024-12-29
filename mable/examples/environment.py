@@ -4,6 +4,7 @@ import threading
 from zipfile import ZipFile
 import pathlib
 from typing import List, TYPE_CHECKING, Dict
+from datetime import datetime
 
 from loguru import logger
 
@@ -129,7 +130,7 @@ def _generate_environment(specifications_builder, trade_occurrence_frequency,
 
 
 def generate_simulation(specifications_builder, show_detailed_auction_outcome=False, output_directory=".",
-                        global_agent_timeout=60):
+                        global_agent_timeout=60, info=None):
     """
     Generate a simulation from a specifications.
 
@@ -143,6 +144,8 @@ def generate_simulation(specifications_builder, show_detailed_auction_outcome=Fa
         Default is 60 seconds.
     :type global_agent_timeout: int.
     :return: The simulation instance.
+    :param info: Any information on the simulation.
+    :type info: str | dict
     :rtype: SimulationEngine
     :raises ValueError: If the output directory does not exist.
     """
@@ -155,7 +158,7 @@ def generate_simulation(specifications_builder, show_detailed_auction_outcome=Fa
                + [LogRunner(logger, "--Run Start (Pre Run Finished)---")])
     post_run = [LogRunner(logger, "--Run Finished---"), _export_stats]
     sim = sim_factory.generate_engine(pre_run_cmds=pre_run, post_run_cmds=post_run, output_directory=output_directory,
-                                      global_agent_timeout=global_agent_timeout)
+                                      global_agent_timeout=global_agent_timeout, info=info)
     _activate_stats_collection(sim, show_detailed_auction_outcome)
     _activate_contract_fulfillment_check(sim)
     return sim
@@ -197,11 +200,14 @@ def _export_stats(simulation):
     """
 
     for one_event_observer in simulation.get_event_observers():
+        timestamp = datetime.today().strftime("%Y-%m-%d-%H-%M-%S")
         if isinstance(one_event_observer, MetricsObserver):
             _calculate_idle_times(simulation, one_event_observer)
             metrics = one_event_observer.metrics.to_json()
             metrics["global_metrics"]["penalty"] = _calculate_penalty(simulation, one_event_observer)
-            file_path = pathlib.Path(simulation.output_directory) / f"metrics_competition_{id(one_event_observer)}.json"
+            metrics["info"] = simulation.info
+            file_name = f"metrics_competition_{id(one_event_observer)}_{timestamp}.json"
+            file_path = pathlib.Path(simulation.output_directory) / file_name
             with open(file_path, "w") as metrics_file:
                 json.dump(metrics, metrics_file, indent=4, cls=JsonAbleEncoder)
             logger.info(f"Metrics exported to {file_path}")

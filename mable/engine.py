@@ -17,6 +17,7 @@ if TYPE_CHECKING:
     from event_management import Event
     from mable.shipping_market import Shipping
     from mable.transport_operation import Vessel, Schedule, ShippingCompany
+    from mable.shipping_market import AuctionLedger
 
 
 def pre_run_inform_vessel_locations(simulation_engine):
@@ -57,7 +58,8 @@ class SimulationEngine:
     POST_RUN_CMDS = []
 
     def __init__(self, world, shipping_companies, cargo_generation, cargo_market, class_factory,
-                 pre_run_cmds=None, post_run_cmds=None, output_directory=None, global_agent_timeout=60):
+                 pre_run_cmds=None, post_run_cmds=None, output_directory=None, global_agent_timeout=60,
+                 info=None):
         """
         Constructor.
 
@@ -85,8 +87,11 @@ class SimulationEngine:
         :type output_directory: str | None
         :param global_agent_timeout: The timeout used for agent operations.
         :type global_agent_timeout: int
+        :param info: Any information on the type or setting of the simulation.
+        :type info: str | dict
         """
         super().__init__()
+        self._info = info
         self._event_observer = []
         self._world = world
         self._shipping_companies = shipping_companies
@@ -118,6 +123,10 @@ class SimulationEngine:
     @property
     def market_authority(self):
         return self._market_authority
+
+    @property
+    def info(self):
+        return self._info
 
     def _pre_run(self):
         self._set_up_trades()
@@ -176,22 +185,42 @@ class SimulationEngine:
         """
         self._new_schedules[company] = schedules
 
-    def apply_new_schedules(self):
+    def apply_new_schedules(self, distribution_ledger):
         """
         Applies any new existing schedules to the vessels.
+
+        :param distribution_ledger: The outcome of the last auction.
+        :type distribution_ledger: AuctionLedger
         """
         while len(self._new_schedules) > 0:
             one_company = next(iter(self._new_schedules.keys()))
             schedules_for_company = self._new_schedules[one_company]
-            for one_vessel in schedules_for_company.keys():
-                schedule_for_vessel = schedules_for_company[one_vessel]
-                if schedule_for_vessel.verify_schedule():
-                    one_vessel.schedule = schedule_for_vessel
-                else:
-                    logger.warning(f"For company {one_company.name} and vessel {one_vessel.name}"
-                                   f" the schedule was rejected:"
-                                   f" time constraints satisfied '{schedule_for_vessel.verify_schedule_time()}'"
-                                   f" and cargo constraints satisfied '{schedule_for_vessel.verify_schedule_cargo()}'")
+            trades_in_all_schedule = [s.get_scheduled_trades() for s in schedules_for_company.values()]
+            trades_in_all_schedule = [t for trades_in_one_schedule in trades_in_all_schedule for t in trades_in_one_schedule]
+            if len(set(trades_in_all_schedule)) == len(trades_in_all_schedule):
+                for one_vessel in schedules_for_company.keys():
+                    schedule_for_vessel = schedules_for_company[one_vessel]
+                    if schedule_for_vessel.verify_schedule():
+                        trades_previously_awarded_to_company = [c.trade for c in self.market_authority.contracts_per_company.get(one_company, [])]
+                        trades_currently_awarded_to_company = [c.trade for c in distribution_ledger.ledger.get(one_company, [])]
+                        trades_awarded_to_company = trades_previously_awarded_to_company + trades_currently_awarded_to_company
+                        trades_in_schedule = [t for t in schedule_for_vessel.get_scheduled_trades()]
+                        all_scheduled_trades_awarded_individually = [
+                            t in trades_awarded_to_company for t in trades_in_schedule]
+                        all_scheduled_trades_awarded = all(all_scheduled_trades_awarded_individually)
+                        if all_scheduled_trades_awarded:
+                            one_vessel.schedule = schedule_for_vessel
+                        else:
+                            logger.warning(f"For company {one_company.name} and vessel {one_vessel.name}"
+                                           f" the schedule was rejected since (an) unawarded trade(a) was/were scheduled.")
+                    else:
+                        logger.warning(f"For company {one_company.name} and vessel {one_vessel.name}"
+                                       f" the schedule was rejected:"
+                                       f" time constraints satisfied '{schedule_for_vessel.verify_schedule_time()}'"
+                                       f" and cargo constraints satisfied '{schedule_for_vessel.verify_schedule_cargo()}'")
+            else:
+                logger.warning(f"For company {one_company.name}"
+                               f" the schedules were rejected due to scheduling the same trade more than once.")
             del self._new_schedules[one_company]
 
     @property

@@ -200,12 +200,16 @@ class Schedule(SimulationEngineAware):
         travel_time = self._vessel.get_travel_time(travel_distance)
         return travel_time
 
-    def _add_task_edges(self, location, cargo_transfer_time, earliest_start=0, latest_finish=math.inf):
+    def _add_task_edges(self, location, location_type, cargo_transfer_time, earliest_start=0, latest_finish=math.inf):
         """
         Add the edges to and from a task.
 
         :param location:
             The location of the task in the order of all tasks.
+        :param location_type: Indicator is it is a pick-up or drop-off. Values can be
+            either pick-up (:py:const:`TransportationSourceDestinationIndicator.PICK_UP`)
+            or drop-off (:py:const:`TransportationSourceDestinationIndicator.DROP_OFF`).
+        :type location_type: int
         :param cargo_transfer_time:
             The time for cargo transfer. If this is loading or unloading depends on the task in the specified
             location.
@@ -214,12 +218,16 @@ class Schedule(SimulationEngineAware):
         :return:
         """
         if location == 1:
-            destination = self._stn.nodes[(1, TransportationStartFinishIndicator.START)]["trade"].destination_port
+            if location_type == TransportationSourceDestinationIndicator.PICK_UP:
+                destination = self._stn.nodes[(1, TransportationStartFinishIndicator.START)]["trade"].origin_port
+            else:
+                destination = self._stn.nodes[(1, TransportationStartFinishIndicator.START)]["trade"].destination_port
             vessel_location = self._engine.world.network.get_vessel_location(self._vessel, self._engine.world.current_time)
             travel_distance = self._engine.world.network.get_distance(vessel_location, destination)
             travel_time = self._vessel.get_travel_time(travel_distance)
             arrival_time = travel_time + self._time_schedule_head
-            self._stn.add_edge((location, TransportationStartFinishIndicator.START), 0, weight=arrival_time)
+            operation_start = max(arrival_time, earliest_start)
+            self._stn.add_edge((location, TransportationStartFinishIndicator.START), 0, weight=-operation_start)
         else:
             travel_time = self._get_travel_time(location, TransportationStartFinishIndicator.START)
             self._stn.add_edge((location, TransportationStartFinishIndicator.START),
@@ -228,6 +236,7 @@ class Schedule(SimulationEngineAware):
             self._stn.add_edge((location - 1, TransportationStartFinishIndicator.FINISH),
                                (location, TransportationStartFinishIndicator.START),
                                weight=math.inf)
+            self._stn.add_edge((location, TransportationStartFinishIndicator.START), 0, weight=-earliest_start)
         if (location + 1, TransportationStartFinishIndicator.START) in self._stn.nodes:
             travel_time = self._get_travel_time(location, TransportationStartFinishIndicator.FINISH)
             self._stn.add_edge((location + 1, TransportationStartFinishIndicator.START),
@@ -243,7 +252,6 @@ class Schedule(SimulationEngineAware):
         self._stn.add_edge(0, (location, TransportationStartFinishIndicator.START), weight=latest_finish)
         self._stn.add_edge(0, (location, TransportationStartFinishIndicator.FINISH),
                            weight=latest_finish + cargo_transfer_time)
-        self._stn.add_edge((location, TransportationStartFinishIndicator.START), 0, weight=-earliest_start)
         self._stn.add_edge((location, TransportationStartFinishIndicator.FINISH), 0,
                            weight=-(earliest_start + cargo_transfer_time))
 
@@ -256,9 +264,10 @@ class Schedule(SimulationEngineAware):
         :type location: int
         :param trade:
             The task's associated trade.
-        :param location_type:
-            Either pick-up (:py:const:`TransportationSourceDestinationIndicator.PICK_UP`)
+        :param location_type: Indicator is it is a pick-up or drop-off. Values can be
+            either pick-up (:py:const:`TransportationSourceDestinationIndicator.PICK_UP`)
             or drop-off (:py:const:`TransportationSourceDestinationIndicator.DROP_OFF`).
+        :type location_type: int
         :param cargo_transfer_time:
             The time for cargo transfer. If this is loading or unloading depends on the task in the specified
             location.
@@ -282,7 +291,7 @@ class Schedule(SimulationEngineAware):
         else:
             earliest_start = trade.earliest_drop_off_clean
             latest_finish = trade.latest_drop_off_clean
-        self._add_task_edges(location, cargo_transfer_time,
+        self._add_task_edges(location, location_type, cargo_transfer_time,
                              earliest_start=earliest_start, latest_finish=latest_finish)
 
     def _add_relocation_task(self, index):
@@ -432,7 +441,19 @@ class Schedule(SimulationEngineAware):
         :return: True is the schedule is valid, False otherwise.
         :rtype: bool
         """
-        has_negative_cycle = nx.negative_edge_cycle(self._stn)
+        # TODO Going through all cycles seems like a bad idea but negative_edge_cycle seems to not work reliably.
+        # At least sometimes it is False despite there being a negative cycle
+        # has_negative_cycle = nx.negative_edge_cycle(self._stn)
+        has_negative_cycle = False
+        all_cycles = nx.simple_cycles(self._stn)
+        try:
+            while not has_negative_cycle:
+                cycle = next(all_cycles)
+                weight = sum(self._stn[u][v]['weight'] for u, v in zip(cycle, cycle[1:] + [cycle[0]]))
+                if weight < 0:
+                    has_negative_cycle = True
+        except StopIteration:
+            pass  # Nothing to do all cycles tested
         is_valid_schedule = not has_negative_cycle
         return is_valid_schedule
 
@@ -511,6 +532,26 @@ class Schedule(SimulationEngineAware):
                     simple_schedule[task_idx - 1] = (location_type.name , current_trade)
         return simple_schedule
 
+    def get_scheduled_trades(self):
+        """
+        List of all trades that are scheduled to be transported.
+
+        :return: The trades.
+        :rtype: List[Trade]
+        """
+        trades = []
+        for one_task in iter(self._stn):
+            task_idx = None
+            if isinstance(one_task, tuple):
+                task_idx = one_task[0]
+            if task_idx is not None:
+                if one_task[1] == TransportationStartFinishIndicator.FINISH:
+                    node = self._stn.nodes[one_task]
+                    location_type, current_trade = self._get_node_info(node)
+                    if location_type == TransportationSourceDestinationIndicator.DROP_OFF:
+                        trades.append(current_trade)
+        return trades
+
     def __len__(self):
         """
         The length in events. Which are usually (i.e. if not partially fulfilled) twice the number of tasks
@@ -522,10 +563,24 @@ class Schedule(SimulationEngineAware):
         return len(self._stn.nodes) - 1
 
     def _get_node(self, idx):
+        """
+        Retrieve the node based on the indices of the tasks in the scheduled. The tasks are ordered by their order in
+        the schedule.
+
+        :param idx: The tasks index.
+        :return: The node.
+        :raises IndexError: If the index does not exist
+        """
         task = (1, TransportationStartFinishIndicator.START)
         if task not in self._stn:
             task = (1, TransportationStartFinishIndicator.FINISH)
-        i = idx
+        if idx < 0:
+            num_nodes = len(self._stn.nodes)
+            i = num_nodes + idx - 1  # - 1 for 0 is not a valid node.
+            if i < 0:
+                raise IndexError(idx)
+        else:
+            i = idx
         while i > 0:
             if task[1] == TransportationStartFinishIndicator.START:
                 task = (task[0], TransportationStartFinishIndicator.FINISH)
@@ -599,6 +654,14 @@ class Schedule(SimulationEngineAware):
         return event
 
     def _generate_travel_event(self, node):
+        """
+        Generate a travel event for a node.
+
+        **Warning** The time of the event is only reliable if the node is the first task in the schedule.
+
+        :param node: The node.
+        :return: The event.
+        """
         vessel_location = self._engine.world.network.get_vessel_location(self._vessel, self._engine.world.current_time)
         vessel_destination = self._get_vessel_destination(node)
         travel_distance = self._engine.world.network.get_distance(vessel_location, vessel_destination)
@@ -609,6 +672,14 @@ class Schedule(SimulationEngineAware):
         return event
 
     def _generate_cargo_transfer_event(self, node):
+        """
+        Generate a cargo transfer event for a node.
+
+        **Warning** The time of the event is only reliable if the node is the first task in the schedule.
+
+        :param node: The node.
+        :return: The event.
+        """
         location_type, current_trade = Schedule._get_node_info(node)
         is_pickup = not location_type
         event_time = self._vessel.get_loading_time(current_trade.cargo_type, current_trade.amount)

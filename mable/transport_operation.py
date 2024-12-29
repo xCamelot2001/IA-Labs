@@ -15,10 +15,11 @@ from mable.shipping_market import Trade
 from mable.transportation_scheduling import Schedule
 from mable.simulation_environment import SimulationEngineAware
 from mable.util import JsonAble
+from mable.simulation_space.universe import OnJourney
 
 if TYPE_CHECKING:
     from mable.event_management import VesselEvent
-    from mable.simulation_space.universe import Location, OnJourney
+    from mable.simulation_space.universe import Location
 
 
 @dataclass
@@ -813,7 +814,9 @@ class SimpleCompany(ShippingCompany[V]):
         port = self._engine.world.network.get_port_or_default(port, port)
         if schedule is not None and len(schedule) > 0:
             location_before = schedule[-1].location
-            finish_time_at_before = schedule[-1].time
+            if isinstance(location_before, OnJourney):
+                location_before = location_before.destination
+            finish_time_at_before = schedule.completion_time()
         else:
             location_before = vessel.location
             finish_time_at_before = self._engine.world.current_time

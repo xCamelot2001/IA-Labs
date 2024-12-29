@@ -136,8 +136,10 @@ class NetworkWithPortDict(ShippingNetwork, ABC):
     def get_port(self, name):
         """
         Returns the port with the name.
-        :param name:
-        :return:
+
+        :param name: The name of a port.
+        :return: The port instance.
+        :rtype: Port
         """
         port = self._ports[name]
         return port

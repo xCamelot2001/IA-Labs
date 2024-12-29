@@ -8,6 +8,8 @@ import math
 from queue import PriorityQueue
 from typing import Any, TYPE_CHECKING, List
 
+from loguru import logger
+
 from mable.simulation_environment import SimulationEngineAware
 from mable.simulation_space.universe import OnJourney
 from mable.util import format_time
@@ -298,7 +300,7 @@ class VesselLocationInformationEvent(VesselEvent):
         """
         super().__init__(time, vessel)
         self._location = location
-        self.info = f"{self._vessel.name} in {self._location.name}"
+        self.info = f"{self._vessel._engine.find_company_for_vessel(self._vessel).name}'s {self._vessel.name} in {self._location.name}"
 
     @property
     def location(self):
@@ -543,6 +545,27 @@ class ArrivalEvent(VesselCargoEvent):
     """
     An event where a vessel arrives for loading or unloading.
     """
+
+    def event_action(self, engine):
+        super().event_action(engine)
+        if self.is_pickup:
+            if self.trade.time_window[0] is not None and self.time < self.trade.time_window[0]:
+                logger.error(f"Company {engine.find_company_for_vessel(self.vessel).name}"
+                             f" has violated trade time constraints:"
+                             f" loading before earliest start ({self.time} < {self.trade.time_window[0]})")
+            elif self.trade.time_window[1] is not None and self.time > self.trade.time_window[1]:
+                logger.error(f"Company {engine.find_company_for_vessel(self.vessel).name}"
+                             f" has violated trade time constraints:"
+                             f" loading after latest finish ({self.time} > {self.trade.time_window[1]})")
+        else:
+            if self.trade.time_window[2] is not None and self.time < self.trade.time_window[2]:
+                logger.error(f"Company {engine.find_company_for_vessel(self.vessel).name}"
+                             f" has violated trade time constraints:"
+                             f" unloading before earliest start ({self.time} < {self.trade.time_window[2]})")
+            elif self.trade.time_window[3] is not None and self.time > self.trade.time_window[3]:
+                logger.error(f"Company {engine.find_company_for_vessel(self.vessel).name}"
+                             f" has violated trade time constraints:"
+                             f" unloading after latest finish ({self.time} > {self.trade.time_window[3]})")
 
     def distance(self, engine):
         """

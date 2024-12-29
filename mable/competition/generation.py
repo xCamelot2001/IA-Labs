@@ -18,7 +18,6 @@ import mable.instructions as instructions
 
 if TYPE_CHECKING:
     from mable.shipping_market import AuctionLedger
-    from mable.shipping_market import Trade
 
 
 logger = loguru.logger
@@ -97,7 +96,7 @@ class AuctionCargoEvent(CargoEvent):
         for current_company in engine.shipping_companies:
             asyncio.run(self._company_receive_timeout(
                 current_company, distribution_ledger, timeout=engine.global_agent_timeout))
-            engine.apply_new_schedules()
+            engine.apply_new_schedules(distribution_ledger)
         return distribution_ledger
 
     @staticmethod
@@ -112,7 +111,8 @@ class AuctionCargoEvent(CargoEvent):
             )
         except asyncio.TimeoutError:
             logger.warning(f"Company {company.name} was stopped from operating 'receive' after {timeout} seconds.")
-
+        except Exception as e:
+            logger.error(f"Company {company.name} ran into an exception while operating 'receive'.")
 
 class AuctionClassFactory(FuelClassFactory):
 

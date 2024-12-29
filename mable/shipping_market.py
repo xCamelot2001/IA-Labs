@@ -351,6 +351,14 @@ class AuctionLedger:
         self._ledger = {one_company: [] for one_company in shipping_companies}
 
     @property
+    def ledger(self):
+        """
+        :return: The full ledger as a dict of the trades indexed by the company names.
+        :rtype: Dict[ShippingCompany, List[Contract]]
+        """
+        return self._ledger
+
+    @property
     def sanitised_ledger(self):
         """
         A full copy of the ledger as a dict of the trades indexed by the company names.
@@ -475,6 +483,8 @@ class AuctionMarket(Market, SimulationEngineAware):
             )
         except asyncio.TimeoutError:
             logger.warning(f"Company {company.name} was stopped from operating 'inform' after {timeout} seconds.")
+        except Exception as e:
+            logger.error(f"Company {company.name} ran into an exception while operating 'inform'.")
         return company_bids
 
     @staticmethod
@@ -487,4 +497,6 @@ class AuctionMarket(Market, SimulationEngineAware):
             )
         except asyncio.TimeoutError:
             logger.warning(f"Company {company.name} was stopped from operating 'pre_inform' after {timeout} seconds.")
+        except Exception as e:
+            logger.error(f"Company {company.name} ran into an exception while operating 'pre_inform'.")
         return company_bids

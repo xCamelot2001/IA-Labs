@@ -8,7 +8,7 @@ from mable.shipping_market import Contract
 
 if TYPE_CHECKING:
     from mable.engine import SimulationEngine
-    from mable.simulation_space.universe import OnJourney, Location
+    from mable.simulation_space.universe import OnJourney, Location, Port
     from mable.transport_operation import Vessel, ShippingCompany
     from mable.shipping_market import AuctionAllocationResult, Trade
 
@@ -62,14 +62,17 @@ class CompanyHeadquarters:
 
         If there is no route between the two locations infinity (math.inf) if returned.
 
+        The two locations can be a location (:py:class:`Location`), a port
+        (:py:class:`Port`) or the names thereof.
+
         **Warning**: *If one or both of the locations come from a vessel on a journey, the calculation will take time.* \
         *It may be better to work with the origin and destination of a journey rather than the actual location of the* \
         *vessel.*
 
         :param location_one: The first location.
-        :type location_one: Union[Port, str]
+        :type location_one: Port | Location | str
         :param location_two: The second location.
-        :type location_one: Union[Port, str]
+        :type location_two: Port | Location | str
         :return: The distance or math.inf if no route between the two locations exists.
         :rtype: float
         """
@@ -137,6 +140,10 @@ class MarketAuthority:
 
     @property
     def contracts_per_company(self):
+        """
+        :return: All contracts for all companies.
+        :rtype: Dict[ShippingCompany, List[Contract]]
+        """
         return self._contracts_per_company
 
     def trade_fulfilled(self, trade, company):

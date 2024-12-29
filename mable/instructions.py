@@ -75,6 +75,18 @@ class Specifications:
             """
             self._add_args(NETWORK_KEY, *args, **kwargs)
 
+
+        def add_random_specifications(self, *args, **kwargs):
+            """
+            Set the random specifications.
+
+            :param args:
+                Positional args.
+            :param kwargs:
+                Keyword args.
+            """
+            self._add_args(RANDOM_KEY, *args, **kwargs)
+
         def _add_args(self, key, *args, **kwargs):
             """
             Add instruction arguments under the specified key.
