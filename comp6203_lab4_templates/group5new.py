@@ -5,7 +5,7 @@ from mable.transportation_scheduling import Schedule
 from mable.shipping_market import TimeWindowTrade
 from mable.extensions.fuel_emissions import VesselWithEngine
 from mable.examples import environment, fleets
-import mable.simulation_space.universe
+# import mable.simulation_space.universe
 
 
 class Company5(TradingCompany):
@@ -29,6 +29,7 @@ class Company5(TradingCompany):
         self._future_trades = trades
         self._future_auction_time = time
         print(f"Future trades: {trades}, Time: {time}")
+
     def create_bid(self, cost,trade):
         """
         Create a bid for a trade.
@@ -49,7 +50,6 @@ class Company5(TradingCompany):
         if trade.time_window[1] - trade.time_window[0] < 100:
             profit_factor += 0.1
         return cost * (1 + profit_factor)
-
 
     def inform(self, trades, *args, **kwargs):
         """

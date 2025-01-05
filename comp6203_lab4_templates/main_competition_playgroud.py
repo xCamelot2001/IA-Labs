@@ -1,6 +1,6 @@
 from mable.examples import environment, fleets, companies
 
-import group5
+import group5new
 
 
 def build_specification():
@@ -10,7 +10,7 @@ def build_specification():
         trades_per_occurrence=trades_per_auction,
         num_auctions=number_of_month)
     my_fleet = fleets.mixed_fleet(num_suezmax=1, num_aframax=1, num_vlcc=1)
-    specifications_builder.add_company(group5.Company5.Data(group5.Company5, my_fleet, group5.Company5.__name__))
+    specifications_builder.add_company(group5new.Company5.Data(group5new.Company5, my_fleet, group5new.Company5.__name__))
     arch_enemy_fleet = fleets.mixed_fleet(num_suezmax=1, num_aframax=1, num_vlcc=1)
     specifications_builder.add_company(
         companies.MyArchEnemy.Data(
