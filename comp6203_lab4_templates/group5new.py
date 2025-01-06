@@ -1,12 +1,7 @@
 from mable.cargo_bidding import TradingCompany, Bid
-from mable.examples import environment, fleets
-from mable.transport_operation import ScheduleProposal, Vessel, SimpleVessel
+from mable.transport_operation import ScheduleProposal
 from mable.transportation_scheduling import Schedule
 from mable.shipping_market import TimeWindowTrade
-from mable.extensions.fuel_emissions import VesselWithEngine
-from mable.examples import environment, fleets
-# import mable.simulation_space.universe
-
 
 class Company5(TradingCompany):
     def __init__(self, fleet, name):
@@ -16,154 +11,235 @@ class Company5(TradingCompany):
         super().__init__(fleet, name)
         self._future_trades = None
         self._future_auction_time = None
+
+        # Keep track of distances for repeated look-ups
         self._distances = {}
+
+        # This dictionary will hold data about how each competitor historically bids
+        # E.g., { competitor_name: {"payments": [...], "margins": [...], "avg_margin": 1.2, ...}, ... }
         self.competitor_data = {}
+        
+        # Current scheduling state
         self.current_schedule = {}
+        
+        # Will hold trades announced in pre_inform
         self.future_trades = []
+        
+        # We store all competitor/won-trade data from the auction ledger
         self.opponent_data = {}
+        
+        # We can store historical payment data to feed into a margin model
+        self.payment_data = []
 
     def pre_inform(self, trades, time):
         """
-        Inform the company of the trades available for bidding.
+        Inform the company of the trades that will be available for bidding *in the next* auction round.
         """
         self._future_trades = trades
         self._future_auction_time = time
         print(f"Future trades: {trades}, Time: {time}")
 
-    def create_bid(self, cost,trade):
+    def create_bid(self, cost, trade, auction_ledger=None):
         """
-        Create a bid for a trade.
+        Create a bid for a trade, using:
+          - self payment_data (average or distribution),
+          - competitor distances,
+          - time window constraints,
+          - plus any competitor margin intelligence gleaned from auction_ledger.
         """
-        #add proposal schedule
 
-        profit_factor=0.2
+        # Base profit factor
+        base_profit_factor = 0.2  # your "default" margin above cost
 
+        # 1) Update your competitor model from the auction_ledger
+        #    If there's new data about competitor bids, parse it and update self.competitor_data
+        if auction_ledger:
+            for competitor_name, records in auction_ledger.items():
+                # Skip your own ledger
+                if competitor_name == self.name:
+                    continue
+
+                # Make sure competitor_name is in competitor_data
+                if competitor_name not in self.competitor_data:
+                    self.competitor_data[competitor_name] = {
+                        "payments": [],
+                        "margins": [],
+                        "avg_margin": 1.0,  # start with neutral margin assumption
+                    }
+
+                for record in records:
+                    # Each record in 'records' should have a .payment, a .trade, etc., if the competitor won
+                    if hasattr(record, "payment") and record.payment is not None:
+                        # Store competitor's payment
+                        self.competitor_data[competitor_name]["payments"].append(record.payment)
+                        
+                        # If you have a cost assumption for the competitor, you can guess their margin:
+                        # For instance, if you estimate the competitor's cost for that trade,
+                        # margin = (payment / estimated_competitor_cost)
+                        # We'll do a naive approach that assumes the competitor's cost ~ your cost for demonstration.
+                        # In a real model, you'd want something more robust (e.g., competitor's vessel location, etc.).
+                        competitor_estimated_cost = cost  # naive assumption
+                        if competitor_estimated_cost > 0:
+                            comp_margin = record.payment / competitor_estimated_cost
+                            self.competitor_data[competitor_name]["margins"].append(comp_margin)
+
+                # Update the competitor's average margin
+                margins = self.competitor_data[competitor_name]["margins"]
+                if margins:
+                    avg_margin = sum(margins) / len(margins)
+                    self.competitor_data[competitor_name]["avg_margin"] = avg_margin
+
+        # 2) Use your overall payment_data to influence your base profit factor
+        if auction_ledger:
+            # If you track *all* winning payments across the entire market:
+            for competitor_name, records in auction_ledger.items():
+                for record in records:
+                    if hasattr(record, "payment") and record.payment is not None:
+                        self.payment_data.append(record.payment)
+
+        if self.payment_data:
+            avg_payment = sum(self.payment_data) / len(self.payment_data)
+            if avg_payment > cost:
+                base_profit_factor += 0.1
+            else:
+                base_profit_factor -= 0.05
+        
+        # 3) Adjust margin for the presence of strong/weak competitors
+        #    If there's a competitor whose average margin is known, we can try to undercut them or stay above them
+        strongest_competitor_margin = 0.0
+        for c_name, c_data in self.competitor_data.items():
+            avg_margin = c_data.get("avg_margin", 1.0)
+            # Example: if a competitor often uses a high margin, we can safely raise ours a bit
+            # If a competitor uses a low margin, we might want to reduce ours to remain competitive
+            if avg_margin > strongest_competitor_margin:
+                strongest_competitor_margin = avg_margin
+        
+        # If we see a competitor that has a high margin, it suggests their bids are typically higher,
+        # so we can push our margin up. If we see a competitor with a low margin, we might want to reduce our margin
+        if strongest_competitor_margin > 1.3:
+            base_profit_factor += 0.1
+        elif strongest_competitor_margin < 1.1:
+            base_profit_factor -= 0.05
+
+        # 4) Additional adjustments based on your own vessel advantage (e.g., if you are physically close)
         competing_vessels = self.find_competing_vessels(trade)
         closest_distance = min(
-            [self.headquarters.get_network_distance(v.location, trade.origin_port) for v in competing_vessels.values()],
+            [
+                self.headquarters.get_network_distance(v.location, trade.origin_port)
+                for v in competing_vessels.values()
+            ],
             default=float('inf')
         )
-        if closest_distance < 50:
-            profit_factor = 0.9
+        # If your location is quite close, you can choose to reduce the margin to secure the trade
+        if closest_distance > 100:  # i.e., your competitor is far from the origin
+            base_profit_factor -= 0.05
         else:
-            profit_factor = 0.8
-        if trade.time_window[1] - trade.time_window[0] < 100:
-            profit_factor += 0.1
-        return cost * (1 + profit_factor)
+            base_profit_factor += 0.05
+
+        # 5) Adjust margin based on how narrow the time window is
+        #    If the window is short, you might charge more because there's more risk
+        #    Or you might want to drop your margin a bit to ensure you get it because time is short
+        time_window_size = trade.time_window[1] - trade.time_window[0]
+        if time_window_size < 100:
+            base_profit_factor += 0.1
+
+        # Final: your final bid
+        final_bid = cost * (1 + base_profit_factor)
+        return final_bid
 
     def inform(self, trades, *args, **kwargs):
         """
-        Inform the company of the trades available for bidding.
+        1. Called right before the actual cargo auctions.
+        2. We propose schedules (like in your example).
+        3. Then we create bids for those trades based on (scheduled) cost.
         """
-        bids=[]
-        proposed_scheduling = self.propose_schedules(trades)
-        scheduled_trades = proposed_scheduling.scheduled_trades
-        self._current_scheduling_proposal = proposed_scheduling
-        trades_and_costs = [
-            (x, proposed_scheduling.costs[x]) if x in proposed_scheduling.costs
-            else (x, 0)
-            for x in scheduled_trades]
-        for x in scheduled_trades:
-            bid_amount = self.create_bid(proposed_scheduling.costs[x], x)
-            bids = [Bid(amount=bid_amount, trade=one_trade) for one_trade, cost in trades_and_costs]
-            #self._future_trades = None
+        try:
 
-        return bids
+            bids = []
+            proposed_scheduling = self.propose_schedules(trades)
+            scheduled_trades = proposed_scheduling.scheduled_trades
+            self._current_scheduling_proposal = proposed_scheduling
+
+            # If a trade is in your proposed scheduling plan, we have a cost for it
+            trades_and_costs = [
+                (x, proposed_scheduling.costs[x]) 
+                if x in proposed_scheduling.costs else (x, 0)
+                for x in scheduled_trades
+            ]
+
+            # For each scheduled trade, compute your bid
+            for trade, cost in trades_and_costs:
+                bid_amount = self.create_bid(
+                    cost,
+                    trade,
+                    auction_ledger=kwargs.get("auction_ledger", None)
+                )
+                bids.append(Bid(amount=bid_amount, trade=trade))
+                
+            return bids
+        except Exception as e:
+            print(f"Error in inform: {e}")
+            return []
 
     def receive(self, contracts, auction_ledger=None, *args, **kwargs):
         """
-        Receive the contracts and update the schedule.
+        Called after the auction has cleared.
+        The 'auction_ledger' has details for all companies about
+        which trades they won and at what payment.
         """
+        # See which competitor got what
         if auction_ledger:
-            for company, won_trades in auction_ledger.items():
-                # if company != self.name:
-                print(f"Competitor {company} won trades: {won_trades}")
+            for competitor_name, won_trades in auction_ledger.items():
+                print(f"Competitor {competitor_name} won trades: {won_trades}")
 
+        # Now, for *your* awarded contracts, incorporate them into your schedule
+        # so the simulator knows how you plan to fulfill these cargoes
         trades = [contract.trade for contract in contracts]
         scheduling_proposal = self.find_schedules(trades)
+
         for contract in contracts:
-            print(f"contract.trade{contract.trade}")
-            print(f"scheduled_trades{scheduling_proposal.scheduled_trades}")
             if contract.trade in scheduling_proposal.scheduled_trades:
                 contract.fulfilled = True
         self.current_schedule = contracts
+        
+        # It's good practice to call `self.apply_schedules(...)` on the final schedule
+        # so that MABLE knows how to simulate your vessel movements.
+        for vessel, schedule in scheduling_proposal.schedules.items():
+            vessel.apply_schedule(schedule)
 
-
-
-    # def find_contracts(self, trades):
-    #     """
-    #     Find the best contracts for the company.
-    #     """
-    #     schedules = {}
-    #     scheduled_trades = []
-    #     costs = {}
-
-    #     sorted_trades = sorted(
-    #         trades,
-    #         key=lambda trade: trade.earliest_pickup or float('inf')
-    #     )
-
-    #     for trade in sorted_trades:
-    #         best_vessel = None
-    #         best_schedule = None
-    #         min_cost = float("inf")
-
-    #         for vessel in self._fleet:
-    #             current_schedule = schedules.get(vessel, vessel.schedule)
-    #             new_schedule = current_schedule.copy()
-
-    #             # Try to add the trade to the schedule
-    #             new_schedule.add_transportation(trade)
-    #             if new_schedule.verify_schedule():
-    #                 total_cost = self.calculate_cost(vessel, trade)
-    #                 if total_cost < min_cost:
-    #                     best_vessel = vessel
-    #                     best_schedule = new_schedule
-    #                     min_cost = total_cost
-    #                     if best_vessel and best_schedule:
-    #                         schedules[best_vessel] = best_schedule
-    #                         scheduled_trades.append(trade)
-    #                         costs[trade] = min_cost
-
-    #     return ScheduleProposal(schedules, scheduled_trades, costs)
     def find_competing_vessels(self, current_trade):
         """
-        Find the closest vessel to the trade's origin port for each competing company.
+        Example method to find the nearest competitor vessel to the origin port
+        for each competitor. This can help inform your margin adjustments.
         """
         competing_vessels = {}
-
         for company in self.headquarters.get_companies():
             if company == self:
-                continue
-            # for every company find the closest vessel to the trade's origin port
-            print(f"nidejiandui:{company.fleet}")
-            print(f"nidetrade:{current_trade}")
+                continue  # Skip self
+            # For each competitor, find the vessel that is physically closest to the trade's origin
             closest_vessel = min(
                 company.fleet,
-                key=lambda v: self.headquarters.get_network_distance(
-                    v.location,current_trade.origin_port
-                ),
+                key=lambda v: self.headquarters.get_network_distance(v.location, current_trade.origin_port),
             )
-            # add the closest vessel to the competing vessels dictionary
             competing_vessels[company] = closest_vessel
         return competing_vessels
 
     def propose_schedules(self, trades):
         """
-        Propose schedules for the trades, optimizing for maximum fulfillment and minimum penalties.
+        Same (or similar) scheduling logic you already have, returning a ScheduleProposal.
+        You can refine it for your own usage.
         """
         schedules = {}
         scheduled_trades = []
         unassigned_trades = []
 
-        # Step 1: Sort trades by priority (profitability and time constraints)
+        # Simple example:  sort trades by some priority measure
         trades = sorted(
             trades,
-            key=lambda t: (t.amount / max(1, t.time_window[1] - t.time_window[0]), -t.earliest_pickup),
+            key=lambda t: (t.amount / max(1, t.time_window[1] - t.time_window[0])),
             reverse=True
         )
 
-        # Step 2: Assign trades to vessels
         for current_trade in trades:
             best_vessel = None
             best_schedule = None
@@ -172,130 +248,74 @@ class Company5(TradingCompany):
             for current_vessel in self._fleet:
                 current_schedule = schedules.get(current_vessel, current_vessel.schedule)
                 new_schedule = current_schedule.copy()
-
-                # Calculate cost and feasibility
-                distance_to_pickup = self.headquarters.get_network_distance(current_vessel.location,
-                                                                            current_trade.origin_port)
-                travel_time_to_pickup = current_vessel.get_travel_time(distance_to_pickup)
-                loading_time = current_vessel.get_loading_time(current_trade.cargo_type, current_trade.amount)
-                total_travel_time = travel_time_to_pickup + loading_time
-
-                # Verify time window
-                if total_travel_time > current_trade.time_window[1] - current_trade.time_window[0]:
-                    continue
-
                 new_schedule.add_transportation(current_trade)
+
+                # Check feasibility
                 if new_schedule.verify_schedule():
                     cost = self.calculate_cost(current_vessel, current_trade)
-
-                    # Scoring based on multiple factors
-                    score = (
-                            current_trade.amount / (cost + 1e-6)  # Higher profitability
-                            - total_travel_time * 0.1  # Penalize longer travel times
-                            + current_vessel.capacity(current_trade.cargo_type) * 0.01  # Reward larger capacity
-                    )
-
+                    # Very naive scoring approach
+                    score = current_trade.amount / (cost + 1e-6)
                     if score > best_score:
                         best_score = score
                         best_vessel = current_vessel
                         best_schedule = new_schedule
 
-            # Assign trade to the best vessel
             if best_vessel and best_schedule:
                 schedules[best_vessel] = best_schedule
                 scheduled_trades.append(current_trade)
             else:
                 unassigned_trades.append(current_trade)
 
-        # Step 3: Attempt to reassign unassigned trades
-        for trade in unassigned_trades[:]:
-            for vessel in self._fleet:
-                current_schedule = schedules.get(vessel, vessel.schedule)
-                new_schedule = current_schedule.copy()
-
-                distance_to_pickup = self.headquarters.get_network_distance(vessel.location, trade.origin_port)
-                travel_time_to_pickup = vessel.get_travel_time(distance_to_pickup)
-                loading_time = vessel.get_loading_time(trade.cargo_type, trade.amount)
-
-                # Check time window again
-                if travel_time_to_pickup + loading_time > trade.time_window[1] - trade.time_window[0]:
-                    continue
-
-                new_schedule.add_transportation(trade)
-                if new_schedule.verify_schedule():
-                    schedules[vessel] = new_schedule
-                    scheduled_trades.append(trade)
-                    unassigned_trades.remove(trade)
-                    break
-
-        # Step 4: Log unassigned trades
+        # If unassigned trades remain, optionally try a second pass
         if unassigned_trades:
-            print(
-                f"Unassigned trades: {[trade.origin_port.name + ' -> ' + trade.destination_port.name for trade in unassigned_trades]}")
+            print(f"Unassigned trades: {[t.origin_port.name + ' -> ' + t.destination_port.name for t in unassigned_trades]}")
 
-        # Step 5: Return the proposed schedules
-        costs = {trade: self.calculate_cost(vessel, trade) for trade in scheduled_trades for vessel in schedules.keys()}
+        # Build cost dictionary
+        costs = {}
+        for vessel, sch in schedules.items():
+            for trade in sch.get_trades():
+                costs[trade] = self.calculate_cost(vessel, trade)
+
         return ScheduleProposal(schedules, scheduled_trades, costs)
 
     def find_schedules(self, trades):
         """
-        Find schedules for a list of trades by assigning them to vessels in the fleet.
-
-        :param trades: List of trades (contracts) to schedule.
-        :return: ScheduleProposal containing schedules, scheduled trades, and costs.
+        A simpler approach that tries to place each trade in a feasible vessel schedule
+        with minimal cost. 
         """
         schedules = {}
         scheduled_trades = []
         unassigned_trades = []
-        allcost = []
+        allcost = {}
 
-
-        # Step 1: Sort trades by priority (e.g., profit margin and earliest pickup time)
-        #trades = sorted(trades, key=lambda t: (t.amount / self.calculate_cost(vessel, t), -t.earliest_pickup), reverse=True)
-
-        # Step 2: Iterate over each trade and try to assign to the best vessel
-        for current_trade in trades:
+        for trade in trades:
             best_vessel = None
             best_schedule = None
             min_cost = float("inf")
 
-            # Step 3: Try to assign the trade to each vessel and calculate the cost
-            for current_vessel in self._fleet:
-                current_vessel_schedule = schedules.get(current_vessel, current_vessel.schedule)
-                new_schedule = current_vessel_schedule.copy()
-                new_schedule.add_transportation(current_trade)
+            for vessel in self._fleet:
+                current_schedule = schedules.get(vessel, vessel.schedule)
+                new_schedule = current_schedule.copy()
+                new_schedule.add_transportation(trade)
 
                 if new_schedule.verify_schedule():
-                    # Calculate the cost of this schedule
-                    cost = self.calculate_cost(current_vessel, current_trade)
+                    cost = self.calculate_cost(vessel, trade)
                     if cost < min_cost:
                         min_cost = cost
-                        best_vessel = current_vessel
+                        best_vessel = vessel
                         best_schedule = new_schedule
 
-            # Step 4: Assign the trade to the best vessel if found
             if best_vessel and best_schedule:
                 schedules[best_vessel] = best_schedule
-                scheduled_trades.append(current_trade)
-                allcost.append(min_cost)  # Record the minimum cost
+                scheduled_trades.append(trade)
+                allcost[trade] = min_cost
             else:
-                # If no suitable vessel is found, record the trade as unassigned
-                unassigned_trades.append(current_trade)
+                unassigned_trades.append(trade)
 
-        # Step 5: Log unassigned trades for debugging
         if unassigned_trades:
-            print(
-                f"Unassigned trades: {[trade.origin_port.name + ' -> ' + trade.destination_port.name for trade in unassigned_trades]}")
+            print(f"Unassigned trades after second pass: {unassigned_trades}")
 
-        # Step 6: Return the scheduling proposal
         return ScheduleProposal(schedules, scheduled_trades, allcost)
-
-    # def apply_schedules(self, schedules):
-    #     """
-    #     Apply the schedules to the vessels.
-    #     """
-    #     for vessel, schedule in schedules.items():
-    #         vessel.schedule = schedule
 
     def calculate_cost(self, vessel, trade):
         distance = self._distances.get((trade.origin_port, trade.destination_port), None)
@@ -318,8 +338,3 @@ class Company5(TradingCompany):
                 time_penalty
         )
         return total_cost
-
-
-
-
-

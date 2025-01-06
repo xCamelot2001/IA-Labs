@@ -6,6 +6,7 @@ from mable.shipping_market import TimeWindowTrade
 from mable.extensions.fuel_emissions import VesselWithEngine
 from mable.examples import environment, fleets
 import mable.simulation_space.universe
+import mable.simulation_space.universe
 
 
 class Company5(TradingCompany):
@@ -75,11 +76,21 @@ class Company5(TradingCompany):
     def inform(self, trades, *args, **kwargs):
         """
         Inform the company of the trades available for bidding.
+        Inform the company of the trades available for bidding.
         """
+        bids=[]
         bids=[]
         proposed_scheduling = self.propose_schedules(trades)
         scheduled_trades = proposed_scheduling.scheduled_trades
         self._current_scheduling_proposal = proposed_scheduling
+        trades_and_costs = [
+            (x, proposed_scheduling.costs[x]) if x in proposed_scheduling.costs
+            else (x, 0)
+            for x in scheduled_trades]
+        for x in scheduled_trades:
+            bid_amount = self.create_bid(proposed_scheduling.costs[x], x)
+            bids = [Bid(amount=bid_amount, trade=one_trade) for one_trade, cost in trades_and_costs]
+            #self._future_trades = None
         trades_and_costs = [
             (x, proposed_scheduling.costs[x]) if x in proposed_scheduling.costs
             else (x, 0)
@@ -102,6 +113,7 @@ class Company5(TradingCompany):
 
         trades = [contract.trade for contract in contracts]
         scheduling_proposal = self.find_schedules(trades)
+        scheduling_proposal = self.find_schedules(trades)
         for contract in contracts:
             print(f"contract.trade{contract.trade}")
             print(f"scheduled_trades{scheduling_proposal.scheduled_trades}")
@@ -110,6 +122,44 @@ class Company5(TradingCompany):
             print(f"Trade {contract.trade}: Fulfilled={contract.fulfilled}, Penalty={contract.trade.penalty}")
         self.current_schedule = contracts
 
+
+
+    # def find_contracts(self, trades):
+    #     """
+    #     Find the best contracts for the company.
+    #     """
+    #     schedules = {}
+    #     scheduled_trades = []
+    #     costs = {}
+
+    #     sorted_trades = sorted(
+    #         trades,
+    #         key=lambda trade: trade.earliest_pickup or float('inf')
+    #     )
+
+    #     for trade in sorted_trades:
+    #         best_vessel = None
+    #         best_schedule = None
+    #         min_cost = float("inf")
+
+    #         for vessel in self._fleet:
+    #             current_schedule = schedules.get(vessel, vessel.schedule)
+    #             new_schedule = current_schedule.copy()
+
+    #             # Try to add the trade to the schedule
+    #             new_schedule.add_transportation(trade)
+    #             if new_schedule.verify_schedule():
+    #                 total_cost = self.calculate_cost(vessel, trade)
+    #                 if total_cost < min_cost:
+    #                     best_vessel = vessel
+    #                     best_schedule = new_schedule
+    #                     min_cost = total_cost
+    #                     if best_vessel and best_schedule:
+    #                         schedules[best_vessel] = best_schedule
+    #                         scheduled_trades.append(trade)
+    #                         costs[trade] = min_cost
+
+    #     return ScheduleProposal(schedules, scheduled_trades, costs)
 
 
     # def find_contracts(self, trades):
@@ -164,6 +214,7 @@ class Company5(TradingCompany):
                 company.fleet,
                 key=lambda v: self.headquarters.get_network_distance(
                     v.location,current_trade.origin_port
+                    v.location,current_trade.origin_port
                 ),
             )
             # add the closest vessel to the competing vessels dictionary
@@ -172,6 +223,7 @@ class Company5(TradingCompany):
 
     def propose_schedules(self, trades):
         """
+        Propose schedules for the trades, optimizing for maximum fulfillment and minimum penalties.
         Propose schedules for the trades, optimizing for maximum fulfillment and minimum penalties.
         """
         schedules = {}
@@ -183,6 +235,8 @@ class Company5(TradingCompany):
             trades,
             key=lambda t: (t.amount / max(1, t.time_window[1] - t.time_window[0]), -t.earliest_pickup),
             reverse=True
+            key=lambda t: (t.amount / max(1, t.time_window[1] - t.time_window[0]), -t.earliest_pickup),
+            reverse=True
         )
 
         # Step 2: Assign trades to vessels
@@ -190,8 +244,10 @@ class Company5(TradingCompany):
             best_vessel = None
             best_schedule = None
             best_score = float('-inf')
+            best_score = float('-inf')
 
             for current_vessel in self._fleet:
+                current_schedule = schedules.get(current_vessel, current_vessel.schedule)
                 current_schedule = schedules.get(current_vessel, current_vessel.schedule)
                 new_schedule = current_schedule.copy()
 
@@ -200,9 +256,14 @@ class Company5(TradingCompany):
                                                                             current_trade.origin_port)
                 travel_time_to_pickup = current_vessel.get_travel_time(distance_to_pickup)
                 loading_time = current_vessel.get_loading_time(current_trade.cargo_type, current_trade.amount)
+                distance_to_pickup = self.headquarters.get_network_distance(current_vessel.location,
+                                                                            current_trade.origin_port)
+                travel_time_to_pickup = current_vessel.get_travel_time(distance_to_pickup)
+                loading_time = current_vessel.get_loading_time(current_trade.cargo_type, current_trade.amount)
                 total_travel_time = travel_time_to_pickup + loading_time
 
                 # Verify time window
+                if total_travel_time > current_trade.time_window[1] - current_trade.time_window[0]:
                 if total_travel_time > current_trade.time_window[1] - current_trade.time_window[0]:
                     continue
 
@@ -212,6 +273,9 @@ class Company5(TradingCompany):
 
                     # Scoring based on multiple factors
                     score = (
+                            current_trade.amount / (cost + 1e-6)  # Higher profitability
+                            - total_travel_time * 0.1  # Penalize longer travel times
+                            + current_vessel.capacity(current_trade.cargo_type) * 0.01  # Reward larger capacity
                             current_trade.amount / (cost + 1e-6)  # Higher profitability
                             - total_travel_time * 0.1  # Penalize longer travel times
                             + current_vessel.capacity(current_trade.cargo_type) * 0.01  # Reward larger capacity
@@ -236,10 +300,12 @@ class Company5(TradingCompany):
                 new_schedule = current_schedule.copy()
 
                 distance_to_pickup = self.headquarters.get_network_distance(vessel.location, trade.origin_port)
+                distance_to_pickup = self.headquarters.get_network_distance(vessel.location, trade.origin_port)
                 travel_time_to_pickup = vessel.get_travel_time(distance_to_pickup)
                 loading_time = vessel.get_loading_time(trade.cargo_type, trade.amount)
 
                 # Check time window again
+                if travel_time_to_pickup + loading_time > trade.time_window[1] - trade.time_window[0]:
                 if travel_time_to_pickup + loading_time > trade.time_window[1] - trade.time_window[0]:
                     continue
 
@@ -254,13 +320,17 @@ class Company5(TradingCompany):
         if unassigned_trades:
             print(
                 f"Unassigned trades: {[trade.origin_port.name + ' -> ' + trade.destination_port.name for trade in unassigned_trades]}")
+                f"Unassigned trades: {[trade.origin_port.name + ' -> ' + trade.destination_port.name for trade in unassigned_trades]}")
 
         # Step 5: Return the proposed schedules
+        costs = {trade: self.calculate_cost(vessel, trade) for trade in scheduled_trades for vessel in schedules.keys()}
         costs = {trade: self.calculate_cost(vessel, trade) for trade in scheduled_trades for vessel in schedules.keys()}
         return ScheduleProposal(schedules, scheduled_trades, costs)
 
     def find_schedules(self, trades):
+    def find_schedules(self, trades):
         """
+        Find schedules for a list of trades by assigning them to vessels in the fleet.
         Find schedules for a list of trades by assigning them to vessels in the fleet.
 
         :param trades: List of trades (contracts) to schedule.
@@ -271,8 +341,11 @@ class Company5(TradingCompany):
         unassigned_trades = []
         allcost = []
 
+        allcost = []
+
 
         # Step 1: Sort trades by priority (e.g., profit margin and earliest pickup time)
+        #trades = sorted(trades, key=lambda t: (t.amount / self.calculate_cost(vessel, t), -t.earliest_pickup), reverse=True)
         #trades = sorted(trades, key=lambda t: (t.amount / self.calculate_cost(vessel, t), -t.earliest_pickup), reverse=True)
 
         # Step 2: Iterate over each trade and try to assign to the best vessel
@@ -280,9 +353,11 @@ class Company5(TradingCompany):
             best_vessel = None
             best_schedule = None
             min_cost = float("inf")
+            min_cost = float("inf")
 
             # Step 3: Try to assign the trade to each vessel and calculate the cost
             for current_vessel in self._fleet:
+                current_vessel_schedule = schedules.get(current_vessel, current_vessel.schedule)
                 current_vessel_schedule = schedules.get(current_vessel, current_vessel.schedule)
                 new_schedule = current_vessel_schedule.copy()
                 new_schedule.add_transportation(current_trade)
@@ -290,6 +365,8 @@ class Company5(TradingCompany):
                 if new_schedule.verify_schedule():
                     # Calculate the cost of this schedule
                     cost = self.calculate_cost(current_vessel, current_trade)
+                    if cost < min_cost:
+                        min_cost = cost
                     if cost < min_cost:
                         min_cost = cost
                         best_vessel = current_vessel
@@ -300,6 +377,7 @@ class Company5(TradingCompany):
                 schedules[best_vessel] = best_schedule
                 scheduled_trades.append(current_trade)
                 allcost.append(min_cost)  # Record the minimum cost
+                allcost.append(min_cost)  # Record the minimum cost
             else:
                 # If no suitable vessel is found, record the trade as unassigned
                 unassigned_trades.append(current_trade)
@@ -308,13 +386,18 @@ class Company5(TradingCompany):
         if unassigned_trades:
             print(
                 f"Unassigned trades: {[trade.origin_port.name + ' -> ' + trade.destination_port.name for trade in unassigned_trades]}")
+                f"Unassigned trades: {[trade.origin_port.name + ' -> ' + trade.destination_port.name for trade in unassigned_trades]}")
 
         # Step 6: Return the scheduling proposal
         return ScheduleProposal(schedules, scheduled_trades, allcost)
 
 
+        return ScheduleProposal(schedules, scheduled_trades, allcost)
+
+
 
     def calculate_cost(self, vessel, trade):
+        distance = self._distances.get((trade.origin_port, trade.destination_port), None)
         distance = self._distances.get((trade.origin_port, trade.destination_port), None)
         if distance is None:
             distance = self.headquarters.get_network_distance(
@@ -327,8 +410,14 @@ class Company5(TradingCompany):
 
         # 增加违约成本
         time_penalty = max(0, trade.earliest_drop_off - (trade.time_window[1] - trade.time_window[0]))
+        # 增加违约成本
+        time_penalty = max(0, trade.earliest_drop_off - (trade.time_window[1] - trade.time_window[0]))
 
         total_cost = (
+                vessel.get_cost(vessel.get_loading_consumption(loading_time)) +
+                vessel.get_cost(vessel.get_unloading_consumption(loading_time)) +
+                vessel.get_cost(vessel.get_laden_consumption(travel_time, vessel.speed)) +
+                time_penalty  # 违约时间的高额惩罚
                 vessel.get_cost(vessel.get_loading_consumption(loading_time)) +
                 vessel.get_cost(vessel.get_unloading_consumption(loading_time)) +
                 vessel.get_cost(vessel.get_laden_consumption(travel_time, vessel.speed)) +
