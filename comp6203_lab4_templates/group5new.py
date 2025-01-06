@@ -7,7 +7,6 @@ from mable.extensions.fuel_emissions import VesselWithEngine
 from mable.examples import environment, fleets
 # import mable.simulation_space.universe
 
-
 class Company5(TradingCompany):
     def __init__(self, fleet, name):
         """
@@ -87,43 +86,6 @@ class Company5(TradingCompany):
             if contract.trade in scheduling_proposal.scheduled_trades:
                 contract.fulfilled = True
         self.current_schedule = contracts
-
-
-
-    # def find_contracts(self, trades):
-    #     """
-    #     Find the best contracts for the company.
-    #     """
-    #     schedules = {}
-    #     scheduled_trades = []
-    #     costs = {}
-
-    #     sorted_trades = sorted(
-    #         trades,
-    #         key=lambda trade: trade.earliest_pickup or float('inf')
-    #     )
-
-    #     for trade in sorted_trades:
-    #         best_vessel = None
-    #         best_schedule = None
-    #         min_cost = float("inf")
-
-    #         for vessel in self._fleet:
-    #             current_schedule = schedules.get(vessel, vessel.schedule)
-    #             new_schedule = current_schedule.copy()
-
-    #             # Try to add the trade to the schedule
-    #             new_schedule.add_transportation(trade)
-    #             if new_schedule.verify_schedule():
-    #                 total_cost = self.calculate_cost(vessel, trade)
-    #                 if total_cost < min_cost:
-    #                     best_vessel = vessel
-    #                     best_schedule = new_schedule
-    #                     min_cost = total_cost
-    #                     if best_vessel and best_schedule:
-    #                         schedules[best_vessel] = best_schedule
-    #                         scheduled_trades.append(trade)
-    #                         costs[trade] = min_cost
 
     #     return ScheduleProposal(schedules, scheduled_trades, costs)
     def find_competing_vessels(self, current_trade):
@@ -290,13 +252,6 @@ class Company5(TradingCompany):
         # Step 6: Return the scheduling proposal
         return ScheduleProposal(schedules, scheduled_trades, allcost)
 
-    # def apply_schedules(self, schedules):
-    #     """
-    #     Apply the schedules to the vessels.
-    #     """
-    #     for vessel, schedule in schedules.items():
-    #         vessel.schedule = schedule
-
     def calculate_cost(self, vessel, trade):
         distance = self._distances.get((trade.origin_port, trade.destination_port), None)
         if distance is None:
@@ -318,8 +273,3 @@ class Company5(TradingCompany):
                 time_penalty
         )
         return total_cost
-
-
-
-
-
