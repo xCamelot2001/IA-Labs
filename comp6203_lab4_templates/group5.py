@@ -253,8 +253,6 @@ class Company5(TradingCompany):
         # Return the scheduling proposal
         return ScheduleProposal(schedules, scheduled_trades, allcost)
 
-
-
     def calculate_cost(self, vessel, trade):
         """
         Calculates total cost for picking up and delivering `trade` using `vessel`.

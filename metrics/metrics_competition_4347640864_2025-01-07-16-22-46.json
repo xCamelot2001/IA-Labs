@@ -234,7 +234,7 @@
             {
                 "0": [
                     {
-                        "payment": 1138.1017632186288,
+                        "payment": 889.341526868172,
                         "trade": {
                             "origin_port": {
                                 "name": "Cape May-485c180b3d95",
@@ -377,7 +377,7 @@
             {
                 "0": [
                     {
-                        "payment": 1092.733941564256,
+                        "payment": 2121.940878438996,
                         "trade": {
                             "origin_port": {
                                 "name": "Port Aransas-29a8105fada5",
@@ -406,7 +406,7 @@
                 ],
                 "1": [
                     {
-                        "payment": 1092.733941564256,
+                        "payment": 2121.940878438996,
                         "trade": {
                             "origin_port": {
                                 "name": "Puerto Jose-bd9e62d67225",
@@ -521,7 +521,7 @@
                 "0": [],
                 "1": [
                     {
-                        "payment": 1364.6045722995812,
+                        "payment": 2008.500880916886,
                         "trade": {
                             "origin_port": {
                                 "name": "Whiffen Head-9d95e17d2034",
@@ -577,7 +577,7 @@
                         "fulfilled": true
                     },
                     {
-                        "payment": 1364.6045722995812,
+                        "payment": 2083.7987669003405,
                         "trade": {
                             "origin_port": {
                                 "name": "Freeport-3415bc29dc8c",
@@ -1125,7 +1125,7 @@
                 ],
                 "2": [
                     {
-                        "payment": 6188.227471733901,
+                        "payment": 9271.667399096938,
                         "trade": {
                             "origin_port": {
                                 "name": "Galveston-80916f3912d8",
@@ -1271,7 +1271,7 @@
             {
                 "0": [
                     {
-                        "payment": 7926.122989100215,
+                        "payment": 12584.289603119958,
                         "trade": {
                             "origin_port": {
                                 "name": "Rio De Janeiro-ef2da6007e09",
@@ -1300,7 +1300,7 @@
                 ],
                 "1": [
                     {
-                        "payment": 7926.122989100215,
+                        "payment": 12584.289603119958,
                         "trade": {
                             "origin_port": {
                                 "name": "Dos Bocas-51ae87032a0e",

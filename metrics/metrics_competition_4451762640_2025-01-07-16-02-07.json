@@ -234,7 +234,7 @@
             {
                 "0": [
                     {
-                        "payment": 1642.6991201423666,
+                        "payment": 2365.486733005008,
                         "trade": {
                             "origin_port": {
                                 "name": "Cape May-485c180b3d95",
@@ -246,7 +246,7 @@
                                 "latitude": 29.31778,
                                 "longitude": -94.79335
                             },
-                            "amount": 50373.04434787636,
+                            "amount": 50373.04434787638,
                             "cargo_type": "Oil",
                             "time": 0,
                             "probability": 1,
@@ -302,7 +302,7 @@
                                 "latitude": 31.38772,
                                 "longitude": 130.55385
                             },
-                            "amount": 24120.85986704411,
+                            "amount": 24120.859867044113,
                             "cargo_type": "Oil",
                             "time": 0,
                             "probability": 1,
@@ -377,7 +377,7 @@
             {
                 "0": [
                     {
-                        "payment": 1211.2310135817463,
+                        "payment": 1744.1726595577147,
                         "trade": {
                             "origin_port": {
                                 "name": "Port Aransas-29a8105fada5",
@@ -406,7 +406,7 @@
                 ],
                 "1": [
                     {
-                        "payment": 1211.2310135817463,
+                        "payment": 1744.1726595577147,
                         "trade": {
                             "origin_port": {
                                 "name": "Puerto Jose-bd9e62d67225",
@@ -521,7 +521,7 @@
                 "0": [],
                 "1": [
                     {
-                        "payment": 1427.2039637223806,
+                        "payment": 2008.500880916886,
                         "trade": {
                             "origin_port": {
                                 "name": "Whiffen Head-9d95e17d2034",
@@ -577,7 +577,7 @@
                         "fulfilled": true
                     },
                     {
-                        "payment": 1427.2039637223806,
+                        "payment": 2055.1737077602284,
                         "trade": {
                             "origin_port": {
                                 "name": "Freeport-3415bc29dc8c",
@@ -616,7 +616,7 @@
                                 "latitude": 1.32447,
                                 "longitude": 103.82839
                             },
-                            "amount": 20837.569338268124,
+                            "amount": 20837.56933826813,
                             "cargo_type": "Oil",
                             "time": 1440,
                             "probability": 1,
@@ -731,7 +731,7 @@
                                 "latitude": 30.03737,
                                 "longitude": 122.14654
                             },
-                            "amount": 24442.07850997616,
+                            "amount": 24442.078509976152,
                             "cargo_type": "Oil",
                             "time": 2160,
                             "probability": 1,
@@ -1125,7 +1125,7 @@
                 ],
                 "2": [
                     {
-                        "payment": 6453.252631262544,
+                        "payment": 9292.683789018063,
                         "trade": {
                             "origin_port": {
                                 "name": "Galveston-80916f3912d8",
@@ -1271,7 +1271,7 @@
             {
                 "0": [
                     {
-                        "payment": 8361.39778206986,
+                        "payment": 12040.4128061806,
                         "trade": {
                             "origin_port": {
                                 "name": "Rio De Janeiro-ef2da6007e09",
@@ -1300,7 +1300,7 @@
                 ],
                 "1": [
                     {
-                        "payment": 8361.39778206986,
+                        "payment": 12040.4128061806,
                         "trade": {
                             "origin_port": {
                                 "name": "Dos Bocas-51ae87032a0e",
@@ -1428,7 +1428,7 @@
                                 "latitude": 12.43039,
                                 "longitude": -69.91776
                             },
-                            "amount": 48763.533782828454,
+                            "amount": 48763.53378282843,
                             "cargo_type": "Oil",
                             "time": 7200,
                             "probability": 1,
@@ -1461,7 +1461,7 @@
                                 "latitude": 39.96503,
                                 "longitude": 0.02471
                             },
-                            "amount": 57735.30493882608,
+                            "amount": 57735.30493882611,
                             "cargo_type": "Oil",
                             "time": 7920,
                             "probability": 1,

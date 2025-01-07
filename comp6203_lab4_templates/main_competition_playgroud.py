@@ -1,6 +1,6 @@
 from mable.examples import environment, fleets, companies
 
-import group5 
+import group5
 
 def build_specification():
     number_of_month = 12
